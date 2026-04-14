@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>광명교회 영유아부 · 가정예배</title>
+
+  <!-- 파비콘 -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
+
+  <!-- OG 메타태그 (카카오톡/문자/SNS 공유 썸네일) -->
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="https://bfwfamilyworship.netlify.app/">
+  <meta property="og:title"       content="광명교회 영유아부 · 가정예배">
+  <meta property="og:description" content="그리도의 형상을 본받아 살아가는 작은예배자 | BFW Little Worshippers">
+  <meta property="og:image"       content="https://bfwfamilyworship.netlify.app/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale"      content="ko_KR">
+  <meta property="og:site_name"   content="광명교회 영유아부">
+
+  <!-- 트위터 카드 -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="광명교회 영유아부 · 가정예배">
+  <meta name="twitter:description" content="그리도의 형상을 본받아 살아가는 작은예배자">
+  <meta name="twitter:image"       content="https://bfwfamilyworship.netlify.app/og-image.png">
+
+  <!-- 카카오톡 추가 메타 -->
+  <meta name="description" content="그리도의 형상을 본받아 살아가는 작은예배자 | BFW Little Worshippers">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ivory:#FAF8F4;--cream:#F4F0E8;--gold:#B8975A;--gold-lt:#D4B47A;--gold-dk:#8B6E3A;
+  --charcoal:#2C2C2C;--stone:#6B6560;--stone-lt:#A09890;--border:#E0D8CC;
+  --white:#FFFFFF;--success:#5A9E7A;--error:#C45050;
+  --radius:16px;--radius-sm:10px;
+  --tr:0.28s cubic-bezier(.4,0,.2,1);
+  --sh-sm:0 2px 12px rgba(44,44,44,.06);--sh-md:0 8px 40px rgba(44,44,44,.10);
+}
+html{scroll-behavior:smooth}
+body{background:var(--ivory);color:var(--charcoal);font-family:'Noto Sans KR',sans-serif;
+  font-weight:300;min-height:100vh;-webkit-font-smoothing:antialiased}
+
+::placeholder{color:var(--stone-lt);opacity:1}
+
+.tab-bar{position:sticky;top:0;z-index:100;background:rgba(250,248,244,.96);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--border);
+  display:flex;justify-content:center;padding:0 20px}
+.tab-btn{flex:1;max-width:160px;padding:16px 8px;background:none;border:none;cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif;font-size:0.82rem;font-weight:400;
+  color:var(--stone-lt);letter-spacing:0.1em;border-bottom:2px solid transparent;transition:all var(--tr)}
+.tab-btn.active{color:var(--gold-dk);border-bottom-color:var(--gold);font-weight:500}
+
+.page{display:none;max-width:640px;margin:0 auto;padding:0 20px 80px}
+.page.active{display:block}
+
+.site-header{text-align:center;padding:36px 0 24px}
+.header-ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:14px;opacity:.5}
+.orn-line{height:1px;width:60px;background:linear-gradient(90deg,transparent,var(--gold))}
+.orn-line.r{background:linear-gradient(90deg,var(--gold),transparent)}
+.church-name{font-family:'Cormorant Garamond',serif;font-weight:400;
+  font-size:clamp(1.5rem,4vw,2rem);letter-spacing:.08em;margin-bottom:4px;color:#8B7355}
+.dept-name{font-size:.76rem;letter-spacing:.25em;color:var(--gold);font-weight:500}
+.theme-text{font-size:.72rem;color:var(--stone-lt);margin-top:8px;line-height:1.7;letter-spacing:.04em;font-weight:300}
+.header-divider{width:48px;height:1.5px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:14px auto 0}
+
+.period-badge{display:flex;align-items:center;gap:8px;justify-content:center;
+  margin:0 auto 20px;padding:8px 18px;background:rgba(184,151,90,.07);
+  border:1px solid rgba(184,151,90,.25);border-radius:100px;width:fit-content}
+.period-dot{width:7px;height:7px;border-radius:50%;background:var(--success);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.period-text{font-size:.75rem;color:var(--stone);letter-spacing:.06em}
+
+.card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);
+  padding:24px 20px;margin-bottom:14px;box-shadow:var(--sh-sm)}
+@media(max-width:480px){.card{padding:18px 14px}}
+
+.section-num{display:inline-flex;align-items:center;gap:12px;margin-bottom:18px}
+.num-badge{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:.88rem;color:var(--gold);flex-shrink:0}
+.num-label{font-size:.8rem;letter-spacing:.12em;color:var(--stone);font-weight:400}
+
+.field-group{position:relative;margin-bottom:8px}
+.float-input{width:100%;padding:16px 18px;border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);background:var(--ivory);
+  font-family:'Noto Sans KR',sans-serif;font-size:1rem;font-weight:400;
+  color:var(--charcoal);outline:none;-webkit-appearance:none;
+  transition:border-color var(--tr),background var(--tr)}
+.float-input:focus{border-color:var(--gold);background:var(--white)}
+select.float-input{color:var(--stone-lt);cursor:pointer}
+select.float-input.selected{color:var(--charcoal)}
+
+.name-preview-wrap{display:flex;align-items:center;gap:10px;margin-top:12px}
+.preview-label-text{font-size:.72rem;color:var(--stone-lt);letter-spacing:.1em;white-space:nowrap}
+.name-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;
+  border-radius:100px;background:var(--cream);border:1px solid var(--border);font-size:.88rem;color:var(--charcoal)}
+.name-pill.active{background:rgba(184,151,90,.08);border-color:var(--gold-lt);color:var(--gold-dk)}
+.pill-dot{width:5px;height:5px;border-radius:50%;background:var(--border);flex-shrink:0}
+.name-pill.active .pill-dot{background:var(--gold)}
+
+.step-connector{width:1px;height:14px;background:linear-gradient(180deg,var(--border),transparent);margin:0 auto 14px}
+
+/* 어린이 이름 리스트 */
+.child-list-wrap{display:flex;flex-wrap:wrap;gap:8px;min-height:0}
+.child-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;
+  border-radius:100px;border:1.5px solid var(--border);background:var(--cream);
+  font-size:.82rem;color:var(--charcoal);cursor:pointer;transition:all var(--tr)}
+.child-chip:hover{border-color:var(--gold-lt);background:rgba(184,151,90,.08);color:var(--gold-dk)}
+.child-chip.active{border-color:var(--gold);background:rgba(184,151,90,.12);color:var(--gold-dk);font-weight:500}
+.child-chip-del{width:16px;height:16px;border-radius:50%;background:var(--stone-lt);
+  color:white;font-size:.55rem;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;transition:background var(--tr)}
+.child-chip-del:hover{background:var(--error)}
+.child-add-row{display:flex;gap:8px;align-items:center}
+.child-add-input{flex:1;padding:12px 16px;border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);background:var(--ivory);
+  font-family:'Noto Sans KR',sans-serif;font-size:.9rem;outline:none}
+.child-add-input:focus{border-color:var(--gold);background:var(--white)}
+.child-add-btn{padding:12px 18px;border-radius:var(--radius-sm);border:none;
+  background:var(--gold);color:white;font-family:'Noto Sans KR',sans-serif;
+  font-size:.82rem;font-weight:500;cursor:pointer;white-space:nowrap;transition:opacity var(--tr)}
+.child-add-btn:hover{opacity:.85}
+.child-empty{font-size:.75rem;color:var(--stone-lt);padding:4px 0}
+
+.upload-zone{position:relative;border:2px dashed var(--border);border-radius:var(--radius);
+  padding:32px 24px;text-align:center;cursor:pointer;transition:all var(--tr);background:var(--ivory);overflow:hidden}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--gold-lt);background:var(--white)}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-icon-wrap{width:48px;height:48px;border-radius:50%;border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 12px;background:var(--white)}
+.upload-icon-svg{width:20px;height:20px;stroke:var(--stone-lt);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.upload-title{font-size:.9rem;color:var(--charcoal);font-weight:400;margin-bottom:4px}
+.upload-subtitle{font-size:.76rem;color:var(--stone-lt);line-height:1.8}
+.upload-rule{display:inline-block;margin-top:10px;font-size:.67rem;color:var(--stone-lt);
+  padding:3px 12px;border-radius:100px;border:1px solid var(--border);background:var(--white)}
+
+.preview-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+.preview-card{position:relative;border-radius:var(--radius-sm);overflow:hidden;
+  aspect-ratio:9/16;background:var(--cream);border:1.5px solid var(--border)}
+.preview-card img,.preview-card video{width:100%;height:100%;object-fit:cover;display:block}
+.preview-tag{position:absolute;top:8px;left:8px;padding:3px 10px;border-radius:100px;
+  background:rgba(44,44,44,.55);color:white;font-size:.62rem}
+.preview-remove{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;
+  background:rgba(196,80,80,.85);border:none;color:white;font-size:.7rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center}
+
+.vp-wrap{margin-top:0}
+.vp-notice,.video-preview-notice{font-size:.72rem;color:var(--gold-dk);background:rgba(184,151,90,.08);
+  border:1px solid rgba(184,151,90,.2);border-radius:8px;padding:8px 12px;margin-bottom:10px;line-height:1.6}
+.vp-label,.video-preview-label{font-size:.75rem;color:var(--stone);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.vp-screen,.video-preview-screen{
+  width:100%;aspect-ratio:16/9;background:#111;border-radius:10px;
+  overflow:hidden;border:1.5px solid var(--border);display:flex}
+.vp-left{width:50%;height:100%;border-right:2px solid white;overflow:hidden;
+  background:#1a1a1a;display:flex;align-items:flex-start;justify-content:center;position:relative}
+.vp-right{width:50%;height:100%;overflow:hidden;background:#1a1a1a;
+  display:flex;align-items:flex-start;justify-content:center;position:relative}
+.vp-img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.vp-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:#555;font-size:.72rem;gap:8px;width:100%;height:100%}
+.vp-empty-icon{font-size:1.6rem;opacity:.4}
+.vp-badge{position:absolute;top:5px;right:5px;background:rgba(0,0,0,.55);color:white;
+  font-size:.55rem;padding:2px 7px;border-radius:100px;font-weight:500}
+
+.field-msg{font-size:.72rem;margin-top:8px;padding-left:4px;color:var(--error);min-height:16px}
+.field-msg.ok{color:var(--success)}
+
+.progress-wrap{display:none;margin-top:14px;padding:16px;
+  background:var(--cream);border:1px solid var(--border);border-radius:var(--radius-sm)}
+.progress-label{font-size:.76rem;color:var(--stone);margin-bottom:8px;
+  display:flex;justify-content:space-between;align-items:center}
+.progress-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold-lt),var(--gold),var(--gold-dk));
+  border-radius:3px;transition:width .3s ease;width:0%}
+.progress-text{font-size:.74rem;color:var(--stone-lt);text-align:center;margin-top:8px;
+  min-height:18px;line-height:1.5}
+
+.submit-btn{width:100%;padding:17px 24px;border-radius:var(--radius);border:none;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dk));color:white;
+  font-family:'Noto Sans KR',sans-serif;font-size:.95rem;font-weight:500;
+  letter-spacing:.12em;cursor:pointer;transition:all var(--tr);
+  box-shadow:0 6px 24px rgba(184,151,90,.35)}
+.submit-btn:hover:not(:disabled){transform:translateY(-2px)}
+.submit-btn:disabled{background:linear-gradient(135deg,var(--border),var(--stone-lt));
+  box-shadow:none;cursor:not-allowed;color:rgba(255,255,255,.7)}
+
+.success-screen{display:none;text-align:center;padding:48px 24px;
+  background:var(--white);border-radius:var(--radius);border:1px solid var(--border)}
+.success-screen.show{display:block}
+.success-icon{width:60px;height:60px;border-radius:50%;background:rgba(90,158,122,.1);
+  border:1.5px solid var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.success-check{width:26px;height:26px;stroke:var(--success);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.success-title{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:400;margin-bottom:10px}
+.success-name{display:inline-block;padding:4px 16px;border-radius:100px;
+  background:rgba(184,151,90,.08);border:1px solid var(--gold-lt);color:var(--gold-dk);font-size:.88rem;margin-bottom:12px}
+.success-msg{font-size:.84rem;color:var(--stone);line-height:1.8}
+.divider-orn{display:flex;align-items:center;gap:12px;margin:20px 0;opacity:.3}
+.divider-orn::before,.divider-orn::after{content:'';flex:1;height:1px;background:var(--gold)}
+.divider-orn span{font-size:.6rem;color:var(--gold);letter-spacing:4px}
+.reset-btn{padding:12px 28px;border-radius:var(--radius-sm);border:1.5px solid var(--border);
+  background:transparent;color:var(--stone);font-family:'Noto Sans KR',sans-serif;
+  font-size:.84rem;cursor:pointer}
+
+/* 영상 카드 - 리스트 스타일 */
+.video-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);
+  overflow:hidden;margin-bottom:10px;cursor:pointer;transition:all var(--tr);
+  box-shadow:var(--sh-sm);text-decoration:none;display:flex;align-items:center;
+  color:inherit;gap:0}
+.video-card:hover{box-shadow:var(--sh-md);border-color:var(--gold-lt)}
+.video-thumb-wrap{position:relative;width:120px;min-width:120px;height:68px;background:#111;overflow:hidden;flex-shrink:0}
+.video-thumb-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.video-play-btn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.2);transition:background var(--tr)}
+.video-card:hover .video-play-btn{background:rgba(0,0,0,.35)}
+.video-play-icon{width:28px;height:28px;border-radius:50%;background:rgba(255,0,0,.88);
+  display:flex;align-items:center;justify-content:center}
+.video-play-icon svg{width:11px;height:11px;fill:white;margin-left:2px}
+.video-info{padding:10px 14px;flex:1;min-width:0}
+.video-title{font-size:.84rem;font-weight:500;color:var(--charcoal);line-height:1.4;margin-bottom:3px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.video-date{font-size:.68rem;color:var(--stone-lt);margin-bottom:2px}
+.video-yt-badge{display:inline-flex;align-items:center;gap:3px;font-size:.62rem;color:#FF0000;font-weight:500}
+
+.album-header{padding:28px 0 20px;text-align:center}
+.album-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;margin-bottom:4px}
+.album-sub{font-size:.76rem;color:var(--stone-lt);letter-spacing:.1em}
+
+.breadcrumb{display:flex;align-items:center;gap:6px;margin-bottom:14px;
+  padding:10px 14px;background:var(--white);border-radius:var(--radius-sm);
+  border:1px solid var(--border);font-size:.78rem;flex-wrap:wrap}
+.bc-item{color:var(--gold-dk);cursor:pointer;font-weight:500}
+.bc-sep{color:var(--stone-lt)}
+.bc-current{color:var(--stone)}
+
+.class-btns{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.class-btn{padding:10px 16px;border-radius:100px;border:1.5px solid var(--border);
+  background:var(--white);color:var(--stone-lt);font-family:'Noto Sans KR',sans-serif;
+  font-size:.82rem;cursor:pointer;transition:all var(--tr);display:flex;align-items:center;gap:6px}
+.class-btn:hover{border-color:var(--gold-lt);color:var(--gold-dk)}
+.class-btn.has-data{border-color:var(--gold-lt);background:rgba(184,151,90,.08);color:var(--gold-dk);font-weight:500}
+
+.child-list{display:flex;flex-direction:column;gap:10px}
+.child-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  padding:16px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all var(--tr)}
+.child-card:hover{border-color:var(--gold-lt)}
+.child-info{display:flex;align-items:center;gap:12px}
+.child-avatar{width:40px;height:40px;border-radius:50%;background:var(--cream);
+  border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.child-name{font-size:.92rem;font-weight:500}
+.child-meta{font-size:.72rem;color:var(--stone-lt);margin-top:2px}
+.child-arrow{color:var(--stone-lt)}
+
+.week-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.week-chip{padding:5px 14px;border-radius:100px;border:1px solid var(--border);
+  background:var(--cream);font-size:.74rem;color:var(--stone);cursor:pointer}
+.week-chip.active{background:var(--gold);border-color:var(--gold);color:white;font-weight:500}
+
+.photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.photo-item{position:relative;border-radius:var(--radius-sm);overflow:hidden;
+  aspect-ratio:9/16;background:var(--cream);cursor:pointer;border:1.5px solid var(--border)}
+.photo-item img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-type{position:absolute;top:6px;right:6px;background:rgba(44,44,44,.55);
+  color:white;font-size:.55rem;padding:2px 7px;border-radius:100px}
+.photo-date{position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(transparent,rgba(44,44,44,.7));
+  color:white;font-size:.65rem;padding:12px 6px 6px;text-align:center}
+
+.lightbox{position:fixed;inset:0;z-index:9998;background:rgba(20,16,12,.92);
+  display:none;align-items:center;justify-content:center;padding:20px}
+.lightbox.show{display:flex}
+.lb-content{max-width:500px;width:100%;max-height:90vh;border-radius:16px;overflow:hidden;position:relative}
+.lb-close{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;
+  background:rgba(44,44,44,.6);border:none;color:white;font-size:.8rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center}
+.lb-info{position:absolute;bottom:0;left:0;right:0;padding:16px;
+  background:linear-gradient(transparent,rgba(20,16,12,.8));color:white;
+  font-size:.8rem;border-radius:0 0 16px 16px}
+
+.loading-spin{width:32px;height:32px;border:2px solid var(--border);
+  border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:40px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty-state{text-align:center;padding:48px 24px;color:var(--stone-lt)}
+.empty-icon{font-size:2.5rem;margin-bottom:12px;display:block;opacity:.5}
+
+/* 시간제한 팝업 */
+.time-popup{position:fixed;inset:0;z-index:9999;background:rgba(28,24,20,.75);
+  backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:24px}
+.time-popup.show{display:flex}
+.time-modal{background:white;border-radius:24px;padding:44px 32px;max-width:420px;
+  width:100%;text-align:center;box-shadow:0 24px 80px rgba(44,44,44,.22)}
+.time-modal-icon{font-size:3rem;display:block;margin-bottom:20px}
+.time-modal-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:500;margin-bottom:12px}
+.time-modal-desc{font-size:.85rem;color:var(--stone);line-height:1.9;margin-bottom:20px}
+.time-modal-btn{padding:12px 32px;border-radius:100px;border:1.5px solid var(--border);
+  background:transparent;color:var(--stone);font-family:'Noto Sans KR',sans-serif;
+  font-size:.84rem;cursor:pointer}
+
+/* 관리자 파일 카드 */
+.admin-file-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.admin-file-thumb{width:48px;height:48px;border-radius:8px;object-fit:cover;
+  background:var(--cream);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.admin-file-thumb img{width:100%;height:100%;object-fit:cover;border-radius:8px}
+.admin-file-info{flex:1;min-width:0}
+.admin-file-name{font-size:.78rem;color:var(--charcoal);font-weight:500;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+.admin-file-meta{font-size:.68rem;color:var(--stone-lt)}
+.admin-file-btns{display:flex;gap:6px;flex-shrink:0}
+.adbtn{padding:5px 10px;border-radius:6px;border:none;font-family:inherit;
+  font-size:.68rem;font-weight:500;cursor:pointer}
+.adbtn-ren{background:rgba(184,151,90,.12);color:var(--gold-dk)}
+.adbtn-del{background:rgba(196,80,80,.1);color:var(--error)}
+
+/* 관리자 팝업 - 기본 숨김 */
+.adm-popup{position:fixed;inset:0;z-index:9997;background:rgba(20,16,12,.6);
+  backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:24px}
+.adm-popup.show{display:flex}
+.adm-modal{background:white;border-radius:20px;padding:28px 24px;max-width:360px;width:100%}
+.adm-modal h3{font-size:.95rem;font-weight:500;margin-bottom:14px}
+.adm-modal input{width:100%;padding:12px 14px;border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);font-family:inherit;font-size:.9rem;outline:none;margin-bottom:12px}
+.adm-modal input:focus{border-color:var(--gold)}
+.adm-btns{display:flex;gap:8px}
+.adm-btn{flex:1;padding:11px;border-radius:var(--radius-sm);border:none;
+  font-family:inherit;font-size:.84rem;font-weight:500;cursor:pointer}
+.adm-cancel{background:var(--cream);color:var(--stone)}
+.adm-ok{background:var(--gold-dk);color:white}
+.adm-ok.del{background:var(--error)}
+</style>
+</head>
+<body>
+
+<!-- 관리자 삭제 팝업 -->
+<div class="adm-popup" id="admDelPopup" style="display:none">
+  <div class="adm-modal">
+    <h3>🗑️ 파일 삭제</h3>
+    <p style="font-size:.82rem;color:var(--stone);margin-bottom:14px;line-height:1.6">
+      <strong id="admDelName"></strong><br>삭제할까요? 복구가 어려워요.
+    </p>
+    <div class="adm-btns">
+      <button class="adm-btn adm-cancel" onclick="closeAdmDel()">취소</button>
+      <button class="adm-btn adm-ok del" onclick="confirmAdmDel()">삭제</button>
+    </div>
+  </div>
+</div>
+
+<!-- 관리자 이름변경 팝업 -->
+<div class="adm-popup" id="admRenPopup" style="display:none">
+  <div class="adm-modal">
+    <h3>✏️ 이름 변경</h3>
+    <input id="admRenInput" type="text" placeholder="새 파일명 (확장자 포함)"
+      onkeydown="if(event.key==='Enter')confirmAdmRen()">
+    <div class="adm-btns">
+      <button class="adm-btn adm-cancel" onclick="closeAdmRen()">취소</button>
+      <button class="adm-btn adm-ok" onclick="confirmAdmRen()">변경</button>
+    </div>
+  </div>
+</div>
+
+<!-- 라이트박스 -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <div class="lb-content" onclick="event.stopPropagation()">
+    <button class="lb-close" onclick="closeLightbox()">✕</button>
+    <div id="lbMedia"></div>
+    <div class="lb-info" id="lbInfo"></div>
+  </div>
+</div>
+
+<!-- 탭 -->
+<nav class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('upload')">📤 사진 업로드</button>
+  <button class="tab-btn" onclick="switchTab('album')">📷 앨범 보기</button>
+  <button class="tab-btn" onclick="switchTab('admin')">🔒 관리자</button>
+</nav>
+
+<!-- ====== 업로드 ====== -->
+<div class="page active" id="page-upload">
+  <header class="site-header">
+    <div class="header-ornament">
+      <div class="orn-line"></div><span style="color:var(--gold);font-size:.9rem">✦</span>
+      <div class="orn-line r"></div>
+    </div>
+    <h1 class="church-name">광명교회</h1>
+    <p class="dept-name">영유아부 · 가정예배</p>
+    <p class="theme-text">그리도의 형상을 본받아 살아가는<br><span>작은예배자</span></p>
+    <div class="header-divider"></div>
+  </header>
+
+  <div class="period-badge">
+    <span class="period-dot" id="periodDot"></span>
+    <span class="period-text" id="periodText">업로드 가능 기간 확인 중...</span>
+  </div>
+
+  <div id="uploadForm">
+    <!-- Step 1: 반 선택 -->
+    <div class="card">
+      <div class="section-num"><div class="num-badge">1</div><span class="num-label">우리 반 선택</span></div>
+      <div class="field-group">
+        <select class="float-input" id="classInput" onchange="onClassInput()">
+
+          <option value="">반 선택</option>
+          <option value="선경나라">선경나라</option>
+          <option value="세희나라">세희나라</option>
+          <option value="아라나라">아라나라</option>
+          <option value="애경나라">애경나라</option>
+          <option value="연옥나라">연옥나라</option>
+          <option value="영실나라">영실나라</option>
+          <option value="재신나라">재신나라</option>
+          <option value="정일나라">정일나라</option>
+          <option value="주영나라">주영나라</option>
+          <option value="진영나라">진영나라</option>
+          <option value="현진나라">현진나라</option>
+          <option value="혜정나라">혜정나라</option>
+          <option value="혜진나라">혜진나라</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Step 2: 어린이 이름 -->
+    <div class="card">
+      <div class="section-num"><div class="num-badge">2</div><span class="num-label">어린이 이름</span></div>
+
+      <!-- 등록된 아이 목록 박스 -->
+      <div style="background:var(--cream);border:1px solid var(--border);border-radius:var(--radius-sm);
+        padding:14px 16px;margin-bottom:14px">
+        <div style="font-size:.72rem;color:var(--stone-lt);letter-spacing:.1em;
+          margin-bottom:10px;font-weight:500">등록된 어린이</div>
+        <div class="child-list-wrap" id="childChipList">
+          <span class="child-empty" id="childEmptyMsg">반을 선택하면 등록된 어린이가 표시돼요</span>
+        </div>
+      </div>
+
+      <!-- 새 아이 추가 -->
+      <div style="font-size:.72rem;color:var(--stone-lt);margin-bottom:8px;letter-spacing:.08em">
+        새 어린이 추가
+      </div>
+      <div class="child-add-row">
+        <input class="child-add-input" id="childNameInput" type="text" autocomplete="off"
+          placeholder="이름 입력 후 + 추가" oninput="onNameInput()"
+          onkeydown="if(event.key==='Enter')addChildName()">
+        <button class="child-add-btn" onclick="addChildName()">+ 추가</button>
+      </div>
+
+      <div class="name-preview-wrap" style="margin-top:12px">
+        <span class="preview-label-text">선택됨</span>
+        <div class="name-pill" id="namePill"><span class="pill-dot"></span><span id="namePillText">—</span></div>
+      </div>
+    </div>
+
+    <!-- Step 3: 파일 첨부 -->
+    <div class="card">
+      <div class="section-num"><div class="num-badge">3</div><span class="num-label">사진 / 영상 첨부</span></div>
+      <div class="upload-zone" id="uploadZone"
+        ondragover="onDragOver(event)" ondragleave="onDragLeave()" ondrop="onDrop(event)">
+        <input type="file" id="fileInput" accept="image/*,video/*" multiple
+          onchange="handleFiles(this.files)" onclick="this.value=null">
+        <div class="upload-icon-wrap">
+          <svg class="upload-icon-svg" viewBox="0 0 24 24">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </div>
+        <p class="upload-title">탭하거나 끌어다 놓으세요</p>
+        <p class="upload-subtitle">사진 2장 또는 사진 1장 + 영상 1개<br>1장씩 따로 첨부 가능 (최대 2개)<br><span style="color:var(--error);font-size:.7rem">영상은 30MB 이하 권장</span></p>
+      </div>
+      <div id="fileMsg" class="field-msg"></div>
+      <div class="preview-grid" id="previewGrid"></div>
+    </div>
+
+    <!-- 영상 미리보기 -->
+    <div class="card" style="margin-top:0;padding:20px">
+      <div class="video-preview-notice">📌 첨부한 사진 비율에 맞춰 영상이 제작됩니다</div>
+      <div class="video-preview-label">🎬 영상에서 이렇게 보여요</div>
+      <div class="video-preview-screen">
+        <div class="vp-left" id="vpLeft">
+          <div class="vp-empty"><span class="vp-empty-icon">📷</span><span>사진 1</span></div>
+        </div>
+        <div class="vp-right" id="vpRight">
+          <div class="vp-empty"><span class="vp-empty-icon">📷</span><span>사진 2 또는 영상</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 업로드 버튼 -->
+    <div style="margin-top:8px">
+      <button class="submit-btn" id="submitBtn" onclick="doSubmit()" disabled>업로드 완료하기</button>
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <p class="progress-text" id="progressText">준비 중...</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon">
+      <svg class="success-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:400;margin-bottom:10px">업로드 완료</h2>
+    <div class="success-name" id="successName"></div>
+    <p style="font-size:.84rem;color:var(--stone);line-height:1.8">파일이 성공적으로 저장되었습니다.<br>선생님, 항상 감사합니다 🙏</p>
+    <button class="reset-btn" onclick="resetForm()">다른 어린이 추가하기</button>
+  </div>
+</div>
+
+<!-- ====== 앨범 ====== -->
+<div class="page" id="page-album">
+  <header class="site-header" style="padding:28px 0 20px">
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;
+      color:var(--charcoal);text-align:center;margin-bottom:4px">가정예배 영상</h2>
+    <p style="font-size:.76rem;color:var(--stone-lt);text-align:center;letter-spacing:.1em">
+      영상을 클릭하면 유튜브로 연결돼요
+    </p>
+  </header>
+
+  <!-- 영상 목록 -->
+  <div id="videoList"></div>
+
+  <!-- 빈 상태 -->
+  <div id="videoEmpty" style="text-align:center;padding:48px 24px;color:var(--stone-lt);display:none">
+    <span style="font-size:2.5rem;display:block;margin-bottom:12px;opacity:.5">🎬</span>
+    <p style="font-size:.85rem">아직 등록된 영상이 없어요</p>
+  </div>
+</div>
+
+<!-- 관리자 페이지 -->
+<div class="page" id="page-admin">
+  <div class="album-header">
+    <h2 class="album-title">🔒 관리자</h2>
+    <p class="album-sub" id="adminPageSub">비밀번호를 입력해 주세요</p>
+  </div>
+
+  <!-- 비밀번호 입력 -->
+  <div id="adminLoginSection">
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px">
+      <div style="text-align:center;margin-bottom:20px;font-size:2rem">🔐</div>
+      <input id="adminPwField" type="password" placeholder="비밀번호 입력"
+        style="width:100%;padding:14px 18px;border:1.5px solid var(--border);border-radius:var(--radius-sm);
+        font-family:inherit;font-size:1rem;outline:none;margin-bottom:10px;text-align:center;letter-spacing:.3em"
+        onkeydown="if(event.key==='Enter')checkAdminPw()"
+        onfocus="this.style.borderColor='var(--gold)'"
+        onblur="this.style.borderColor='var(--border)'">
+      <p id="adminPwErr" style="font-size:.75rem;color:var(--error);text-align:center;min-height:18px;margin-bottom:10px"></p>
+      <button onclick="checkAdminPw()"
+        style="width:100%;padding:14px;border-radius:var(--radius-sm);border:none;
+        background:linear-gradient(135deg,var(--gold),var(--gold-dk));color:white;
+        font-family:inherit;font-size:.95rem;font-weight:500;cursor:pointer">
+        로그인
+      </button>
+    </div>
+  </div>
+
+  <!-- 관리자 콘텐츠 -->
+  <div id="adminContent" style="display:none">
+    <div style="background:rgba(196,80,80,.06);border:1px solid rgba(196,80,80,.2);
+      border-radius:var(--radius-sm);padding:10px 16px;margin-bottom:16px;
+      display:flex;align-items:center;justify-content:space-between">
+      <span style="font-size:.78rem;color:var(--error);font-weight:500">🔴 관리자 모드</span>
+      <button onclick="exitAdmin()"
+        style="font-size:.72rem;color:var(--stone-lt);padding:4px 12px;border:1px solid var(--border);
+        border-radius:100px;background:transparent;cursor:pointer;font-family:inherit">로그아웃</button>
+    </div>
+
+    <!-- 영상 추가 -->
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px">
+      <div style="font-size:.78rem;color:var(--stone);margin-bottom:12px;font-weight:500">🎬 영상 추가</div>
+      <input id="adminVideoUrlInput" type="url" placeholder="유튜브 링크 붙여넣기 (https://youtu.be/...)"
+        style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);
+        font-family:inherit;font-size:.85rem;outline:none;margin-bottom:8px"
+        onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'">
+      <input id="adminVideoTitleInput" type="text" placeholder="영상 제목 (비워두면 자동으로 가져와요)"
+        style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);
+        font-family:inherit;font-size:.85rem;outline:none;margin-bottom:10px"
+        onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'">
+      <button onclick="adminAddVideo(document.getElementById('adminVideoUrlInput').value)"
+        style="width:100%;padding:13px;border-radius:var(--radius-sm);border:none;
+        background:linear-gradient(135deg,var(--gold),var(--gold-dk));color:white;
+        font-family:inherit;font-size:.9rem;font-weight:500;cursor:pointer">
+        + 영상 추가하기
+      </button>
+    </div>
+
+    <!-- 등록된 영상 목록 -->
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px">
+      <div style="font-size:.78rem;color:var(--stone);margin-bottom:12px;font-weight:500">📋 등록된 영상</div>
+      <div id="adminVideoList"></div>
+    </div>
+
+    <!-- 반 선택 (드라이브 파일 관리) -->
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px">
+      <div style="font-size:.78rem;color:var(--stone);margin-bottom:10px;font-weight:500">📁 드라이브 파일 관리</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px" id="adminClassBtns"></div>
+    </div>
+
+    <!-- 파일 목록 -->
+    <div id="adminFileSection" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="font-size:.88rem;font-weight:500;color:var(--charcoal)" id="adminFileTitle"></span>
+        <button onclick="adminBackToClass()"
+          style="font-size:.75rem;color:var(--gold-dk);padding:4px 12px;border:1px solid var(--gold-lt);
+          border-radius:100px;background:transparent;cursor:pointer;font-family:inherit">← 뒤로</button>
+      </div>
+      <div id="adminFileList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbykFlwgoXvwbaXsvebgLCf0VJ7AjrSuY-JWUVwqZys9TkceIJouYWRmLq7nPGGFY5k/exec';
+const CLASS_LIST = ['선경나라','세희나라','아라나라','애경나라','연옥나라','영실나라','재신나라','정일나라','주영나라','진영나라','현진나라','혜정나라','혜진나라'];
+const CLASS_EMOJI = ['🌱','🌸','🦋','⭐','🌈','🐣','🌻','🍀','🌙','🐬','🦁','🕊️','🌺'];
+
+let selectedFiles = [];
+let albumInited = false;
+let albumData = [];
+let currentClass = null;
+let currentChild = null;
+let currentWeek = 'all';
+
+// ── 시간 체크 ──
+function isUploadBlocked() {
+  const now = new Date();
+  const dow = now.getDay(), hour = now.getHours(), min = now.getMinutes();
+  return (dow === 6 && (hour > 11 || (hour === 11 && min >= 0)));
+}
+
+function checkUploadTime() {
+  const dot = document.getElementById('periodDot');
+  const text = document.getElementById('periodText');
+  if (isUploadBlocked()) {
+    dot.style.background = '#C45050';
+    dot.style.animation = 'none';
+    text.textContent = '업로드 마감 · 토요일 오전 11:00 이후';
+    text.style.color = 'var(--error)';
+  } else {
+    dot.style.background = 'var(--success)';
+    dot.style.animation = '';
+    text.textContent = '업로드 가능 · 주일 00:00 ~ 토요일 오전 11:00';
+    text.style.color = '';
+  }
+}
+
+function showTimeBlockPopup() {
+  const now = new Date();
+  const days = ['일','월','화','수','목','금','토'];
+  const dow = now.getDay();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const el = document.createElement('div');
+  el.className = 'time-overlay';
+  el.innerHTML = `
+    <div class="time-modal">
+      <span style="font-size:3rem;display:block;margin-bottom:16px">⏰</span>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;color:var(--charcoal);margin-bottom:10px">업로드 가능 시간이 아니에요</h2>
+      <p style="font-size:.84rem;color:var(--stone);line-height:1.9;margin-bottom:20px">
+        현재 시각: <strong>${days[dow]}요일 ${h}:${m}</strong><br>
+        업로드 가능: <strong>주일 00:00 ~ 토요일 오전 11:00</strong>
+      </p>
+      <button onclick="this.closest('.time-overlay').remove()"
+        style="padding:12px 32px;border-radius:100px;border:1.5px solid var(--border);
+        background:transparent;color:var(--stone);font-family:'Noto Sans KR',sans-serif;
+        font-size:.84rem;cursor:pointer">확인</button>
+    </div>`;
+  document.body.appendChild(el);
+}
+
+// ── 탭 ──
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) =>
+    b.classList.toggle('active', ['upload','album','admin'][i] === name));
+  document.querySelectorAll('.page').forEach(p =>
+    p.classList.toggle('active', p.id === 'page-'+name));
+  if (name === 'album') renderVideoList();
+  // 관리자 탭 진입시 비밀번호 초기화
+  if (name === 'admin' && !adminLoggedIn) {
+    document.getElementById('adminLoginSection').style.display = 'block';
+    document.getElementById('adminContent').style.display = 'none';
+    document.getElementById('adminPwField').value = '';
+    document.getElementById('adminPwErr').textContent = '';
+  }
+}
+
+// ── 업로드 폼 ──
+function onClassInput() {
+  const el = document.getElementById('classInput');
+  el.classList.toggle('selected', !!el.value);
+  // 반 바뀌면 어린이 이름 초기화
+  document.getElementById('childNameInput').value = '';
+  renderChildChips();
+  updatePill(); checkReady();
+}
+
+function onNameInput() {
+  updatePill(); updateVideoPreview(); checkReady();
+}
+
+function updatePill() {
+  const cls = document.getElementById('classInput').value.trim();
+  const name = document.getElementById('childNameInput').value.trim();
+  const pill = document.getElementById('namePill');
+  const txt = document.getElementById('namePillText');
+  if (cls && name) { txt.textContent = `${cls} ${name}`; pill.classList.add('active'); }
+  else if (cls) { txt.textContent = `${cls} —`; pill.classList.remove('active'); }
+  else { txt.textContent = '—'; pill.classList.remove('active'); }
+}
+
+function checkReady() {
+  const cls = document.getElementById('classInput').value.trim();
+  const name = document.getElementById('childNameInput').value.trim();
+  document.getElementById('submitBtn').disabled = !(cls && name && selectedFiles.length >= 1);
+}
+
+function showMsg(t, type) {
+  const el = document.getElementById('fileMsg');
+  el.textContent = t;
+  el.className = 'field-msg' + (type === 'ok' ? ' ok' : '');
+}
+
+function onDragOver(e) { e.preventDefault(); document.getElementById('uploadZone').classList.add('dragover'); }
+function onDragLeave() { document.getElementById('uploadZone').classList.remove('dragover'); }
+function onDrop(e) { e.preventDefault(); onDragLeave(); handleFiles(e.dataTransfer.files); }
+
+function handleFiles(files) {
+  const arr = Array.from(files);
+  if (arr.length === 0) return;
+
+  // 시간 체크 - 파일 첨부 시 팝업
+  if (isUploadBlocked()) {
+    showTimeBlockPopup();
+    return;
+  }
+
+  // 누적 첨부 (최대 2개)
+  for (const f of arr) {
+    if (selectedFiles.length >= 2) {
+      showMsg('최대 2개까지 가능해요. ✕ 버튼으로 삭제 후 추가해주세요.', 'err');
+      break;
+    }
+    selectedFiles.push(f);
+  }
+
+  showMsg('', '');
+  renderPreviews();
+  updateVideoPreview();
+  checkReady();
+}
+
+function renderPreviews() {
+  const grid = document.getElementById('previewGrid');
+  grid.innerHTML = '';
+  selectedFiles.forEach((file, i) => {
+    const card = document.createElement('div');
+    card.className = 'preview-card';
+    const isImg = file.type.startsWith('image/');
+
+    if (isImg) {
+      const img = document.createElement('img');
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
+      const reader = new FileReader();
+      reader.onload = (e) => { img.src = e.target.result; };
+      reader.readAsDataURL(file);
+      card.appendChild(img);
+    } else {
+      const video = document.createElement('video');
+      video.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
+      video.muted = true; video.loop = true; video.autoplay = true; video.playsInline = true;
+      const reader = new FileReader();
+      reader.onload = (e) => { video.src = e.target.result; };
+      reader.readAsDataURL(file);
+      card.appendChild(video);
+    }
+
+    const tag = document.createElement('div');
+    tag.className = 'preview-tag';
+    tag.textContent = isImg ? '사진' : '영상';
+    card.appendChild(tag);
+
+    const rm = document.createElement('button');
+    rm.className = 'preview-remove';
+    rm.textContent = '✕';
+    rm.onclick = () => { selectedFiles.splice(i,1); renderPreviews(); updateVideoPreview(); checkReady(); };
+    card.appendChild(rm);
+
+    grid.appendChild(card);
+  });
+}
+
+function updateVideoPreview() {
+  const vpLeft = document.getElementById('vpLeft');
+  const vpRight = document.getElementById('vpRight');
+  const childName = document.getElementById('childNameInput').value.trim() || '어린이 이름';
+  const imgs = selectedFiles.filter(f => f.type.startsWith('image/'));
+  const vids = selectedFiles.filter(f => f.type.startsWith('video/'));
+
+  if (imgs.length >= 1) {
+    const url = URL.createObjectURL(imgs[0]);
+    vpLeft.innerHTML = `<img src="${url}" class="vp-img"><span class="vp-badge">사진 1</span>`;
+  } else {
+    vpLeft.innerHTML = '<div class="vp-empty"><span class="vp-empty-icon">📷</span><span>사진 1</span></div>';
+  }
+
+  if (vids.length >= 1) {
+    const url = URL.createObjectURL(vids[0]);
+    vpRight.innerHTML = `<video src="${url}" class="vp-img" muted autoplay loop playsinline></video><span class="vp-badge">🎬 영상</span>`;
+  } else if (imgs.length >= 2) {
+    const url = URL.createObjectURL(imgs[1]);
+    vpRight.innerHTML = `<img src="${url}" class="vp-img"><span class="vp-badge">사진 2</span>`;
+  } else {
+    vpRight.innerHTML = '<div class="vp-empty"><span class="vp-empty-icon">📷</span><span>사진 2 또는 영상</span></div>';
+  }
+}
+
+async function doSubmit() {
+  if (isUploadBlocked()) { showTimeBlockPopup(); return; }
+  const cls  = document.getElementById('classInput').value.trim();
+  const name = document.getElementById('childNameInput').value.trim();
+  if (!cls || !name || selectedFiles.length === 0) return;
+
+  const btn    = document.getElementById('submitBtn');
+  const wrapEl = document.getElementById('progressWrap');
+  const fillEl = document.getElementById('progressFill');
+  const textEl = document.getElementById('progressText');
+
+  btn.disabled = true;
+  wrapEl.style.cssText = 'display:block!important;margin-top:14px;padding:16px;background:#FAF8F4;border:1px solid #E0D8CC;border-radius:10px';
+  fillEl.style.width = '0%';
+  textEl.textContent = '업로드 준비 중...';
+
+  try {
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const file  = selectedFiles[i];
+      const isVid = file.type.startsWith('video/');
+      const label = isVid ? '영상' : '사진';
+
+      // 사진은 압축, 영상은 그대로
+      let uploadFile = file;
+      let ext = file.name.split('.').pop().toLowerCase();
+
+      if (!isVid) {
+        textEl.textContent = `사진 ${i+1}/${selectedFiles.length} 압축 중...`;
+        fillEl.style.width = '10%';
+        uploadFile = await compressImage(file);
+        ext = 'jpg';
+      }
+
+      const fname = i === 0 ? `${cls} ${name}.${ext}` : `${cls} ${name}-${i+1}.${ext}`;
+
+      // 파일 읽기
+      textEl.textContent = `${label} ${i+1}/${selectedFiles.length} 읽는 중...`;
+      const b64 = await new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onprogress = (e) => {
+          if (e.lengthComputable) {
+            fillEl.style.width = Math.round(15 + (e.loaded/e.total)*50) + '%';
+            textEl.textContent = `${label} ${i+1}/${selectedFiles.length} 읽는 중... ${Math.round((e.loaded/e.total)*100)}%`;
+          }
+        };
+        r.onload  = () => res(r.result.split(',')[1]);
+        r.onerror = () => rej(new Error('파일 읽기 실패'));
+        r.readAsDataURL(uploadFile);
+      });
+
+      // 전송
+      fillEl.style.width = '70%';
+      textEl.textContent = `${label} ${i+1}/${selectedFiles.length} 전송 중...`;
+
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          className: cls,
+          childName: name,
+          files: [{ name: fname, mimeType: isVid ? file.type : 'image/jpeg', base64: b64 }]
+        })
+      });
+
+      fillEl.style.width = '100%';
+      textEl.textContent = `${label} ${i+1}/${selectedFiles.length} ✅ 완료`;
+      await new Promise(r => setTimeout(r, 300));
+    }
+
+    textEl.textContent = '🎉 모든 파일 업로드 완료!';
+    await new Promise(r => setTimeout(r, 700));
+    showSuccess(cls, name);
+
+  } catch(err) {
+    fillEl.style.background = '#E87070';
+    textEl.textContent = '❌ ' + err.message;
+    btn.disabled = false;
+    setTimeout(() => {
+      wrapEl.style.display = 'none';
+      fillEl.style.background = '';
+      fillEl.style.width = '0%';
+    }, 5000);
+  }
+}
+
+// 이미지 압축 함수 - 사진 전송 크기 최소화
+function compressImage(file, maxWidth=1920, quality=0.82) {
+  return new Promise((resolve) => {
+    // 영상은 압축 없이 그대로
+    if (!file.type.startsWith('image/')) { resolve(file); return; }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let w = img.width, h = img.height;
+
+        // 최대 너비 초과 시 비율 유지하며 축소
+        if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+
+        // JPEG로 압축 (PNG도 JPEG로 변환해서 크기 절감)
+        const mimeOut = 'image/jpeg';
+        canvas.toBlob((blob) => {
+          const compressed = new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: mimeOut });
+          console.log(`압축: ${(file.size/1024).toFixed(0)}KB → ${(compressed.size/1024).toFixed(0)}KB`);
+          resolve(compressed);
+        }, mimeOut, quality);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const reader = new FileReader();
+    reader.onload = () => res(reader.result.split(',')[1]);
+    reader.onerror = rej;
+    reader.readAsDataURL(file);
+  });
+}
+
+function showSuccess(cls, name) {
+  document.getElementById('uploadForm').style.display = 'none';
+  document.getElementById('successName').textContent = `${cls} ${name}`;
+  document.getElementById('successScreen').classList.add('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+  albumInited = false;
+}
+
+function resetForm() {
+  selectedFiles = [];
+  document.getElementById('classInput').value = '';
+  document.getElementById('classInput').classList.remove('selected');
+  document.getElementById('childNameInput').value = '';
+  document.getElementById('namePillText').textContent = '—';
+  renderChildChips();
+  document.getElementById('namePill').classList.remove('active');
+  document.getElementById('previewGrid').innerHTML = '';
+  document.getElementById('fileMsg').textContent = '';
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('successScreen').classList.remove('show');
+  document.getElementById('uploadForm').style.display = 'block';
+  updateVideoPreview();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── 앨범 ──
+async function initAlbum() {
+  albumInited = true;
+  document.getElementById('albumLoading').style.display = 'block';
+  try {
+    const res = await fetch(`${SCRIPT_URL}?action=list`);
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error);
+    albumData = data.data;
+  } catch(err) {
+    albumData = [];
+  }
+  document.getElementById('albumLoading').style.display = 'none';
+  showClassView();
+}
+
+function showClassView() {
+  currentClass = null; currentChild = null; currentWeek = 'all';
+  document.getElementById('albumSub').textContent = '반을 선택해 주세요';
+  hideBreadcrumb(); hideWeekTabs();
+
+  const classes = {};
+  albumData.forEach(d => {
+    if (!classes[d.class]) classes[d.class] = { children: new Set(), files: 0 };
+    classes[d.class].children.add(d.child);
+    classes[d.class].files += d.files.length;
+  });
+
+  let html = '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px">';
+  CLASS_LIST.forEach((cls, i) => {
+    const info = classes[cls];
+    const hasData = !!info;
+    const count = hasData ? `${info.children.size}명` : '';
+    html += `<button onclick="showChildView('${cls}')"
+      style="padding:10px 16px;border-radius:100px;
+      border:1.5px solid ${hasData ? 'var(--gold-lt)' : 'var(--border)'};
+      background:${hasData ? 'rgba(184,151,90,.08)' : 'var(--white)'};
+      color:${hasData ? 'var(--gold-dk)' : 'var(--stone-lt)'};
+      font-family:'Noto Sans KR',sans-serif;font-size:.82rem;
+      font-weight:${hasData ? '500' : '300'};cursor:pointer;
+      display:inline-flex;align-items:center;gap:6px">
+      <span>${CLASS_EMOJI[i]}</span><span>${cls}</span>
+      ${hasData ? `<span style="font-size:.7rem;opacity:.7">${count}</span>` : ''}
+    </button>`;
+  });
+  html += '</div>';
+
+  document.getElementById('classView').innerHTML = html;
+  document.getElementById('classView').style.display = 'block';
+  document.getElementById('childView').style.display = 'none';
+  document.getElementById('photoView').style.display = 'none';
+}
+
+function showChildView(className) {
+  currentClass = className; currentChild = null; currentWeek = 'all';
+  document.getElementById('albumSub').textContent = className;
+
+  const classData = albumData.filter(d => d.class === className);
+  const children = {};
+  classData.forEach(d => {
+    if (!children[d.child]) children[d.child] = { weeks: new Set(), files: 0 };
+    children[d.child].weeks.add(d.week);
+    children[d.child].files += d.files.length;
+  });
+
+  if (Object.keys(children).length === 0) {
+    document.getElementById('childView').innerHTML =
+      `<div class="empty-state"><span class="empty-icon">📭</span><p>아직 업로드된 사진이 없어요</p></div>`;
+  } else {
+    let html = '<div class="child-list">';
+    Object.keys(children).sort().forEach(child => {
+      const info = children[child];
+      html += `<div class="child-card" onclick="showPhotoView('${className}','${child}')">
+        <div class="child-info">
+          <div class="child-avatar">${child.charAt(0)}</div>
+          <div>
+            <div class="child-name">${child}</div>
+            <div class="child-meta">${info.weeks.size}주차 · ${info.files}개</div>
+          </div>
+        </div>
+        <span style="color:var(--stone-lt)">›</span>
+      </div>`;
+    });
+    html += '</div>';
+    document.getElementById('childView').innerHTML = html;
+  }
+
+  document.getElementById('classView').style.display = 'none';
+  document.getElementById('childView').style.display = 'block';
+  document.getElementById('photoView').style.display = 'none';
+
+  updateBreadcrumb([
+    { label: '전체 반', action: 'showClassView()' },
+    { label: className, action: null }
+  ]);
+}
+
+function showPhotoView(className, childName) {
+  currentClass = className; currentChild = childName;
+  document.getElementById('albumSub').textContent = `${className} · ${childName}`;
+
+  const childData = albumData.filter(d => d.class === className && d.child === childName);
+  const weeks = ['all', ...new Set(childData.map(d => d.week))].sort().reverse();
+  renderWeekTabs(weeks);
+  renderPhotos(childData);
+
+  document.getElementById('classView').style.display = 'none';
+  document.getElementById('childView').style.display = 'none';
+  document.getElementById('photoView').style.display = 'block';
+
+  updateBreadcrumb([
+    { label: '전체 반', action: 'showClassView()' },
+    { label: className, action: `showChildView('${className}')` },
+    { label: childName, action: null }
+  ]);
+}
+
+function renderPhotos(data) {
+  const filtered = currentWeek === 'all' ? data : data.filter(d => d.week === currentWeek);
+  const allFiles = filtered.flatMap(d => d.files.map(f => ({...f, week: d.week, child: d.child})));
+
+  if (allFiles.length === 0) {
+    document.getElementById('photoView').innerHTML =
+      `<div class="empty-state"><span class="empty-icon">📭</span><p>사진이 없어요</p></div>`;
+    return;
+  }
+
+  let html = '<div class="photo-grid">';
+  allFiles.forEach(file => {
+    const isImg = file.mimeType && file.mimeType.startsWith('image/');
+    const thumbUrl = `https://drive.google.com/thumbnail?id=${file.id}&sz=w400`;
+    const thumb = isImg
+      ? `<img src="${thumbUrl}" loading="lazy">`
+      : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#111;color:#888;font-size:2rem">🎬</div>`;
+    html += `<div class="photo-item" onclick="openLightbox('${file.id}','${file.mimeType}','${file.child}','${file.week}')">
+      ${thumb}
+      <div class="photo-type">${isImg ? '사진' : '영상'}</div>
+      <div class="photo-date">${file.week.replace('_주','주')}</div>
+    </div>`;
+  });
+  html += '</div>';
+  document.getElementById('photoView').innerHTML = html;
+}
+
+function renderWeekTabs(weeks) {
+  const div = document.getElementById('weekTabs');
+  div.style.display = 'flex';
+  div.innerHTML = weeks.map(w =>
+    `<div class="week-chip ${w===currentWeek?'active':''}" onclick="filterWeek('${w}')">
+      ${w==='all' ? '전체' : w.replace('_주','주')}
+    </div>`
+  ).join('');
+}
+
+function filterWeek(week) {
+  currentWeek = week;
+  const childData = albumData.filter(d => d.class === currentClass && d.child === currentChild);
+  const weeks = ['all', ...new Set(childData.map(d => d.week))].sort().reverse();
+  renderWeekTabs(weeks);
+  renderPhotos(childData);
+}
+
+function updateBreadcrumb(items) {
+  const bc = document.getElementById('breadcrumb');
+  bc.style.display = 'flex';
+  bc.innerHTML = items.map((item, i) => {
+    const isLast = i === items.length - 1;
+    return (isLast
+      ? `<span class="bc-current">${item.label}</span>`
+      : `<span class="bc-item" onclick="${item.action}">${item.label}</span>`)
+      + (isLast ? '' : '<span class="bc-sep">›</span>');
+  }).join('');
+}
+
+function hideBreadcrumb() { document.getElementById('breadcrumb').style.display = 'none'; }
+function hideWeekTabs() { document.getElementById('weekTabs').style.display = 'none'; }
+
+function openLightbox(fileId, mime, child, week) {
+  const isImg = mime && mime.startsWith('image/');
+  let html = '';
+  if (isImg) {
+    html = `<img src="https://lh3.googleusercontent.com/d/${fileId}"
+      style="width:100%;border-radius:16px;display:block"
+      onerror="this.src='https://drive.google.com/uc?export=view&id=${fileId}'">`;
+  } else {
+    html = `<div style="position:relative;padding-bottom:56.25%;height:0;border-radius:16px;overflow:hidden">
+      <iframe src="https://drive.google.com/file/d/${fileId}/preview"
+        style="position:absolute;top:0;left:0;width:100%;height:100%;border:none"
+        allowfullscreen></iframe></div>`;
+  }
+  document.getElementById('lbMedia').innerHTML = html;
+  document.getElementById('lbInfo').textContent = `${child} · ${week.replace('_주','주')}`;
+  document.getElementById('lightbox').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('show');
+  document.getElementById('lbMedia').innerHTML = '';
+  document.body.style.overflow = '';
+}
+
+
+// ── 관리자 기능 ──
+const ADMIN_PW = '2130';
+let adminLoggedIn = false;
+let admPendingDelId = null;
+let admPendingRenId = null;
+let adminCurrentClass = null;
+let adminAlbumData = [];
+
+function checkAdminPw() {
+  const pw = document.getElementById('adminPwField').value;
+  if (pw === ADMIN_PW) {
+    adminLoggedIn = true;
+    document.getElementById('adminLoginSection').style.display = 'none';
+    document.getElementById('adminContent').style.display = 'block';
+    document.getElementById('adminPageSub').textContent = '관리자 모드 활성화';
+    loadAdminClassBtns();
+  } else {
+    document.getElementById('adminPwErr').textContent = '비밀번호가 틀렸어요.';
+    document.getElementById('adminPwField').value = '';
+    setTimeout(() => document.getElementById('adminPwErr').textContent = '', 2000);
+  }
+}
+
+function exitAdmin() {
+  adminLoggedIn = false;
+  document.getElementById('adminLoginSection').style.display = 'block';
+  document.getElementById('adminContent').style.display = 'none';
+  document.getElementById('adminPwField').value = '';
+  document.getElementById('adminPageSub').textContent = '비밀번호를 입력해 주세요';
+  document.getElementById('adminFileSection').style.display = 'none';
+  adminCurrentClass = null;
+}
+
+async function loadAdminClassBtns() {
+  renderAdminVideoList();
+  const wrap = document.getElementById('adminClassBtns');
+  wrap.innerHTML = '<span style="font-size:.75rem;color:var(--stone-lt)">불러오는 중...</span>';
+  try {
+    const res = await fetch(SCRIPT_URL + '?action=list');
+    const data = await res.json();
+    adminAlbumData = data.success ? data.data : [];
+  } catch { adminAlbumData = []; }
+
+  const classes = {};
+  adminAlbumData.forEach(d => {
+    if (!classes[d.class]) classes[d.class] = 0;
+    classes[d.class] += d.files.length;
+  });
+
+  wrap.innerHTML = '';
+  CLASS_LIST.forEach((cls, i) => {
+    const cnt = classes[cls] || 0;
+    const btn = document.createElement('button');
+    btn.style.cssText = `padding:8px 14px;border-radius:100px;
+      border:1.5px solid ${cnt ? 'var(--gold-lt)' : 'var(--border)'};
+      background:${cnt ? 'rgba(184,151,90,.08)' : 'var(--white)'};
+      color:${cnt ? 'var(--gold-dk)' : 'var(--stone-lt)'};
+      font-family:inherit;font-size:.8rem;cursor:pointer;
+      display:inline-flex;align-items:center;gap:5px;margin:2px`;
+    btn.innerHTML = `<span>${CLASS_EMOJIS[i]}</span><span>${cls}</span>
+      ${cnt ? `<span style="font-size:.68rem;opacity:.7">${cnt}개</span>` : ''}`;
+    btn.onclick = () => loadAdminFiles(cls);
+    wrap.appendChild(btn);
+  });
+}
+
+async function loadAdminFiles(className) {
+  adminCurrentClass = className;
+  document.getElementById('adminFileSection').style.display = 'block';
+  document.getElementById('adminFileTitle').textContent = className + ' 파일 목록';
+  const list = document.getElementById('adminFileList');
+  list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--stone-lt);font-size:.82rem">불러오는 중...</div>';
+
+  const classData = adminAlbumData.filter(d => d.class === className);
+  const allFiles = classData.flatMap(d => d.files.map(f => ({...f, child:d.child, week:d.week})));
+
+  if (!allFiles.length) {
+    list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--stone-lt);font-size:.82rem">파일이 없어요</div>';
+    return;
+  }
+
+  list.innerHTML = '';
+  allFiles.forEach(file => {
+    const isImg = file.mimeType && file.mimeType.startsWith('image/');
+    const card = document.createElement('div');
+    card.className = 'admin-file-card';
+    card.innerHTML = `
+      <div class="admin-file-thumb">
+        ${isImg ? `<img src="https://drive.google.com/thumbnail?id=${file.id}&sz=w80"
+          onerror="this.parentNode.textContent='📷'">` : '🎬'}
+      </div>
+      <div class="admin-file-info">
+        <div class="admin-file-name">${file.name}</div>
+        <div class="admin-file-meta">${file.child} · ${file.week.replace('_주','주')}</div>
+      </div>
+      <div class="admin-file-btns">
+        <button class="adbtn adbtn-ren"
+          onclick="openAdmRen('${file.id}','${file.name}')">✏️ 이름</button>
+        <button class="adbtn adbtn-del"
+          onclick="openAdmDel('${file.id}','${file.name}')">🗑️ 삭제</button>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+function adminBackToClass() {
+  document.getElementById('adminFileSection').style.display = 'none';
+  adminCurrentClass = null;
+}
+
+function openAdmDel(id, name) {
+  admPendingDelId = id;
+  document.getElementById('admDelName').textContent = name;
+  document.getElementById('admDelPopup').style.display = 'flex';
+}
+function closeAdmDel() {
+  document.getElementById('admDelPopup').style.display = 'none';
+  admPendingDelId = null;
+}
+async function confirmAdmDel() {
+  if (!admPendingDelId) return;
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action:'deleteFile', fileId:admPendingDelId, password:ADMIN_PW })
+    });
+    const data = await res.json();
+    closeAdmDel();
+    if (data.success) {
+      await loadAdminClassBtns();
+      if (adminCurrentClass) loadAdminFiles(adminCurrentClass);
+    } else { alert('삭제 실패: ' + (data.error||'')); }
+  } catch(e) { closeAdmDel(); alert('오류: '+e.message); }
+}
+
+function openAdmRen(id, name) {
+  admPendingRenId = id;
+  document.getElementById('admRenInput').value = name;
+  document.getElementById('admRenPopup').style.display = 'flex';
+  setTimeout(() => document.getElementById('admRenInput').focus(), 100);
+}
+function closeAdmRen() {
+  document.getElementById('admRenPopup').style.display = 'none';
+  admPendingRenId = null;
+}
+async function confirmAdmRen() {
+  const newName = document.getElementById('admRenInput').value.trim();
+  if (!newName || !admPendingRenId) return;
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action:'renameFile', fileId:admPendingRenId, newName, password:ADMIN_PW })
+    });
+    const data = await res.json();
+    closeAdmRen();
+    if (data.success) {
+      await loadAdminClassBtns();
+      if (adminCurrentClass) loadAdminFiles(adminCurrentClass);
+    } else { alert('변경 실패: ' + (data.error||'')); }
+  } catch(e) { closeAdmRen(); alert('오류: '+e.message); }
+}
+
+
+
+// ── 어린이 이름 저장소 (반별 localStorage) ──
+function getSavedChildren(cls) {
+  if (!cls) return [];
+  try { return JSON.parse(localStorage.getItem('children_' + cls) || '[]'); }
+  catch { return []; }
+}
+
+function saveChildren(cls, list) {
+  localStorage.setItem('children_' + cls, JSON.stringify(list));
+}
+
+function renderChildChips() {
+  const cls = document.getElementById('classInput').value;
+  const wrap = document.getElementById('childChipList');
+  const children = getSavedChildren(cls);
+  const currentName = document.getElementById('childNameInput').value.trim();
+
+  wrap.innerHTML = '';
+
+  if (!cls) {
+    wrap.innerHTML = '<span class="child-empty">반을 선택하면 등록된 어린이가 표시돼요</span>';
+    return;
+  }
+  if (children.length === 0) {
+    wrap.innerHTML = '<span class="child-empty">아직 추가된 어린이가 없어요</span>';
+    return;
+  }
+
+  children.forEach(name => {
+    const chip = document.createElement('div');
+    chip.className = 'child-chip' + (name === currentName ? ' active' : '');
+    const nameSpan = document.createElement('span');
+    nameSpan.textContent = name;
+    nameSpan.onclick = () => selectChild(name);
+    const delBtn = document.createElement('span');
+    delBtn.className = 'child-chip-del';
+    delBtn.textContent = '✕';
+    delBtn.onclick = (e) => { e.stopPropagation(); removeChild(name); };
+    chip.appendChild(nameSpan);
+    chip.appendChild(delBtn);
+    wrap.appendChild(chip);
+  });
+}
+
+function selectChild(name) {
+  document.getElementById('childNameInput').value = name;
+  onNameInput();
+  renderChildChips();
+}
+
+function addChildName() {
+  const cls = document.getElementById('classInput').value;
+  const name = document.getElementById('childNameInput').value.trim();
+  if (!cls) { alert('반을 먼저 선택해주세요!'); return; }
+  if (!name) return;
+  const list = getSavedChildren(cls);
+  if (!list.includes(name)) {
+    list.push(name);
+    saveChildren(cls, list);
+  }
+  selectChild(name);
+}
+
+function removeChild(name) {
+  const cls = document.getElementById('classInput').value;
+  const list = getSavedChildren(cls).filter(n => n !== name);
+  saveChildren(cls, list);
+  const current = document.getElementById('childNameInput').value.trim();
+  if (current === name) {
+    document.getElementById('childNameInput').value = '';
+    onNameInput();
+  }
+  renderChildChips();
+}
+
+
+// ── 영상 보기 (유튜브 링크 관리) ──
+// 영상은 관리자가 추가한 것만 표시 (localStorage 저장)
+function getVideoList() {
+  try { return JSON.parse(localStorage.getItem('yt_videos') || '[]'); }
+  catch { return []; }
+}
+
+function saveVideoList(list) {
+  localStorage.setItem('yt_videos', JSON.stringify(list));
+}
+
+function extractYoutubeId(url) {
+  const patterns = [
+    /youtu\.be\/([^?&]+)/,
+    /youtube\.com\/watch\?v=([^&]+)/,
+    /youtube\.com\/embed\/([^?&]+)/,
+    /youtube\.com\/shorts\/([^?&]+)/,
+  ];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+async function fetchYoutubeTitle(videoId) {
+  try {
+    const res = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
+    const data = await res.json();
+    return data.title || '';
+  } catch { return ''; }
+}
+
+function renderVideoList() {
+  const list = getVideoList();
+  const container = document.getElementById('videoList');
+  const empty = document.getElementById('videoEmpty');
+  if (!container) return;
+
+  if (list.length === 0) {
+    container.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+
+  container.innerHTML = list.map((v, i) => `
+    <a class="video-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener">
+      <div class="video-thumb-wrap">
+        <img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg"
+          onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${v.id}/mqdefault.jpg'">
+        <div class="video-play-btn">
+          <div class="video-play-icon">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="video-info">
+        <div class="video-title">${v.title || '가정예배 영상'}</div>
+        <div class="video-date">${v.date || ''}</div>
+        <div class="video-yt-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#FF0000"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-2.75 12.66 12.66 0 0 0-6.81 0A4.83 4.83 0 0 1 5.24 6.7 46.15 46.15 0 0 0 4 12a46.15 46.15 0 0 0 1.24 5.31 4.83 4.83 0 0 1 3.77 2.75 12.66 12.66 0 0 0 6.81 0 4.83 4.83 0 0 1 3.77-2.75A46.15 46.15 0 0 0 21 12a46.15 46.15 0 0 0-1.41-5.31z"/><polygon fill="white" points="9.75,15.02 15.5,12 9.75,8.98"/></svg>
+          YouTube에서 보기
+        </div>
+      </div>
+    </a>
+  `).join('');
+}
+
+async function adminAddVideo(url) {
+  const videoId = extractYoutubeId(url);
+  if (!videoId) { alert('올바른 유튜브 링크를 입력해 주세요'); return; }
+
+  const list = getVideoList();
+  if (list.find(v => v.id === videoId)) { alert('이미 추가된 영상이에요'); return; }
+
+  // 제목 가져오기
+  const titleEl = document.getElementById('adminVideoTitleInput');
+  let title = titleEl ? titleEl.value.trim() : '';
+  if (!title) title = await fetchYoutubeTitle(videoId);
+  if (!title) title = '가정예배 영상';
+
+  const now = new Date();
+  const date = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
+
+  list.unshift({ id: videoId, title, date });
+  saveVideoList(list);
+
+  // 입력 초기화
+  const urlEl = document.getElementById('adminVideoUrlInput');
+  if (urlEl) urlEl.value = '';
+  if (titleEl) titleEl.value = '';
+
+  renderAdminVideoList();
+  alert('✅ 영상이 추가됐어요!');
+}
+
+function adminDeleteVideo(videoId) {
+  if (!confirm('이 영상을 삭제할까요?')) return;
+  const list = getVideoList().filter(v => v.id !== videoId);
+  saveVideoList(list);
+  renderAdminVideoList();
+}
+
+function renderAdminVideoList() {
+  const wrap = document.getElementById('adminVideoList');
+  if (!wrap) return;
+  const list = getVideoList();
+
+  if (list.length === 0) {
+    wrap.innerHTML = '<div style="text-align:center;padding:20px;color:var(--stone-lt);font-size:.82rem">등록된 영상이 없어요</div>';
+    return;
+  }
+
+  wrap.innerHTML = list.map(v => `
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
+      <img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg"
+        style="width:80px;height:45px;object-fit:cover;border-radius:6px;flex-shrink:0">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.82rem;font-weight:500;color:var(--charcoal);
+          white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v.title}</div>
+        <div style="font-size:.7rem;color:var(--stone-lt);margin-top:2px">${v.date}</div>
+      </div>
+      <button onclick="adminDeleteVideo('${v.id}')"
+        style="padding:5px 10px;border-radius:6px;border:none;
+        background:rgba(196,80,80,.1);color:var(--error);
+        font-family:inherit;font-size:.72rem;cursor:pointer;flex-shrink:0">
+        🗑️ 삭제
+      </button>
+    </div>
+  `).join('');
+}
+
+// ── INIT ──
+checkUploadTime();
+setInterval(checkUploadTime, 60000);
+</script>
+  <!-- 푸터 -->
+  <div style="text-align:center;padding:28px 0 40px;border-top:1px solid var(--border);margin-top:20px">
+    <p style="font-family:'Cormorant Garamond',serif;font-size:.9rem;color:var(--stone-lt);
+      letter-spacing:.15em;font-weight:400">
+      BFW <span style="color:var(--gold);font-weight:500">Little Worshippers</span>
+    </p>
+  </div>
+
+</body>
+</html>

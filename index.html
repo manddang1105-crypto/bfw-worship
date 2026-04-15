@@ -6,7 +6,7 @@
 <title>광명교회 영유아부 · 가정예배</title>
 
   <!-- 파비콘 -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23B8975A'/><text y='.85em' font-size='62' font-family='serif' fill='white' text-anchor='middle' x='50'>B</text></svg>">
 
   <!-- OG 메타태그 (카카오톡/문자/SNS 공유 썸네일) -->
   <meta property="og:type"        content="website">
@@ -337,7 +337,7 @@ select.float-input.selected{color:var(--charcoal)}
 <!-- 관리자 삭제 팝업 -->
 <div class="adm-popup" id="admDelPopup" style="display:none">
   <div class="adm-modal">
-    <h3>🗑️ 파일 삭제</h3>
+    <h3>파일 삭제</h3>
     <p style="font-size:.82rem;color:var(--stone);margin-bottom:14px;line-height:1.6">
       <strong id="admDelName"></strong><br>삭제할까요? 복구가 어려워요.
     </p>
@@ -351,7 +351,7 @@ select.float-input.selected{color:var(--charcoal)}
 <!-- 관리자 이름변경 팝업 -->
 <div class="adm-popup" id="admRenPopup" style="display:none">
   <div class="adm-modal">
-    <h3>✏️ 이름 변경</h3>
+    <h3>이름 변경</h3>
     <input id="admRenInput" type="text" placeholder="새 파일명 (확장자 포함)"
       onkeydown="if(event.key==='Enter')confirmAdmRen()">
     <div class="adm-btns">
@@ -372,9 +372,9 @@ select.float-input.selected{color:var(--charcoal)}
 
 <!-- 탭 -->
 <nav class="tab-bar">
-  <button class="tab-btn active" onclick="switchTab('upload')">📤 사진 업로드</button>
-  <button class="tab-btn" onclick="switchTab('album')">📷 앨범 보기</button>
-  <button class="tab-btn" onclick="switchTab('admin')">🔒 관리자</button>
+  <button class="tab-btn active" onclick="switchTab('upload')">사진 업로드</button>
+  <button class="tab-btn" onclick="switchTab('album')">앨범 보기</button>
+  <button class="tab-btn" onclick="switchTab('admin')">관리자</button>
 </nav>
 
 <!-- ====== 업로드 ====== -->
@@ -473,14 +473,14 @@ select.float-input.selected{color:var(--charcoal)}
 
     <!-- 영상 미리보기 -->
     <div class="card" style="margin-top:0;padding:20px">
-      <div class="video-preview-notice">📌 첨부한 사진 비율에 맞춰 영상이 제작됩니다</div>
-      <div class="video-preview-label">🎬 영상에서 이렇게 보여요</div>
+      <div class="video-preview-notice">첨부한 사진 비율에 맞춰 영상이 제작됩니다</div>
+      <div class="video-preview-label">영상에서 이렇게 보여요</div>
       <div class="video-preview-screen">
         <div class="vp-left" id="vpLeft">
-          <div class="vp-empty"><span class="vp-empty-icon">📷</span><span>사진 1</span></div>
+          <div class="vp-empty"><span>사진 1</span></div>
         </div>
         <div class="vp-right" id="vpRight">
-          <div class="vp-empty"><span class="vp-empty-icon">📷</span><span>사진 2 또는 영상</span></div>
+          <div class="vp-empty"><span>사진 2 또는 영상</span></div>
         </div>
       </div>
     </div>
@@ -503,7 +503,7 @@ select.float-input.selected{color:var(--charcoal)}
     </div>
     <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:400;margin-bottom:10px">업로드 완료</h2>
     <div class="success-name" id="successName"></div>
-    <p style="font-size:.84rem;color:var(--stone);line-height:1.8">파일이 성공적으로 저장되었습니다.<br>선생님, 항상 감사합니다 🙏</p>
+    <p style="font-size:.84rem;color:var(--stone);line-height:1.8">파일이 성공적으로 저장되었습니다.<br>선생님, 항상 감사합니다.</p>
     <button class="reset-btn" onclick="resetForm()">다른 어린이 추가하기</button>
   </div>
 </div>
@@ -512,7 +512,7 @@ select.float-input.selected{color:var(--charcoal)}
 <div class="page" id="page-album">
   <header class="site-header" style="padding:28px 0 16px">
     <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;
-      color:var(--charcoal);text-align:center;margin-bottom:4px">📸 사진 앨범</h2>
+      color:var(--charcoal);text-align:center;margin-bottom:4px">사진 앨범</h2>
     <p class="album-sub" id="albumSub" style="font-size:.76rem;color:var(--stone-lt);
       text-align:center;letter-spacing:.1em">반을 선택해 주세요</p>
   </header>
@@ -544,12 +544,11 @@ select.float-input.selected{color:var(--charcoal)}
 
   <!-- 가정예배 영상 -->
   <div style="margin-bottom:12px">
-    <h3 style="font-size:.82rem;font-weight:500;color:var(--stone);letter-spacing:.12em;margin-bottom:14px">🎬 가정예배 영상</h3>
+    <h3 style="font-size:.82rem;font-weight:500;color:var(--stone);letter-spacing:.12em;margin-bottom:14px">가정예배 영상</h3>
     <!-- 영상 목록 -->
     <div id="videoList"></div>
     <!-- 빈 상태 -->
     <div id="videoEmpty" style="text-align:center;padding:32px 24px;color:var(--stone-lt);display:none">
-      <span style="font-size:2.5rem;display:block;margin-bottom:12px;opacity:.5">🎬</span>
       <p style="font-size:.85rem">아직 등록된 영상이 없어요</p>
     </div>
   </div>
@@ -558,14 +557,14 @@ select.float-input.selected{color:var(--charcoal)}
 <!-- 관리자 페이지 -->
 <div class="page" id="page-admin">
   <div class="album-header">
-    <h2 class="album-title">🔒 관리자</h2>
+    <h2 class="album-title">관리자</h2>
     <p class="album-sub" id="adminPageSub">비밀번호를 입력해 주세요</p>
   </div>
 
   <!-- 비밀번호 입력 -->
   <div id="adminLoginSection">
     <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px">
-      <div style="text-align:center;margin-bottom:20px;font-size:2rem">🔐</div>
+      <div style="text-align:center;margin-bottom:20px;font-size:2rem"></div>
       <input id="adminPwField" type="password" placeholder="비밀번호 입력"
         style="width:100%;padding:14px 18px;border:1.5px solid var(--border);border-radius:var(--radius-sm);
         font-family:inherit;font-size:1rem;outline:none;margin-bottom:10px;text-align:center;letter-spacing:.3em"
@@ -587,7 +586,7 @@ select.float-input.selected{color:var(--charcoal)}
     <div style="background:rgba(196,80,80,.06);border:1px solid rgba(196,80,80,.2);
       border-radius:var(--radius-sm);padding:10px 16px;margin-bottom:16px;
       display:flex;align-items:center;justify-content:space-between">
-      <span style="font-size:.78rem;color:var(--error);font-weight:500">🔴 관리자 모드</span>
+      <span style="font-size:.78rem;color:var(--error);font-weight:500">관리자 모드</span>
       <button onclick="exitAdmin()"
         style="font-size:.72rem;color:var(--stone-lt);padding:4px 12px;border:1px solid var(--border);
         border-radius:100px;background:transparent;cursor:pointer;font-family:inherit">로그아웃</button>
@@ -595,7 +594,7 @@ select.float-input.selected{color:var(--charcoal)}
 
     <!-- 영상 추가 -->
     <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px">
-      <div style="font-size:.78rem;color:var(--stone);margin-bottom:12px;font-weight:500">🎬 영상 추가</div>
+      <div style="font-size:.78rem;color:var(--stone);margin-bottom:12px;font-weight:500">영상 추가</div>
       <input id="adminVideoUrlInput" type="url" placeholder="유튜브 링크 붙여넣기 (https://youtu.be/...)"
         style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);
         font-family:inherit;font-size:.85rem;outline:none;margin-bottom:8px"
@@ -614,13 +613,13 @@ select.float-input.selected{color:var(--charcoal)}
 
     <!-- 등록된 영상 목록 -->
     <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px">
-      <div style="font-size:.78rem;color:var(--stone);margin-bottom:12px;font-weight:500">📋 등록된 영상</div>
+      <div style="font-size:.78rem;color:var(--stone);margin-bottom:12px;font-weight:500">등록된 영상</div>
       <div id="adminVideoList"></div>
     </div>
 
     <!-- 반 선택 (드라이브 파일 관리) -->
     <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px">
-      <div style="font-size:.78rem;color:var(--stone);margin-bottom:10px;font-weight:500">📁 드라이브 파일 관리</div>
+      <div style="font-size:.78rem;color:var(--stone);margin-bottom:10px;font-weight:500">드라이브 파일 관리</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px" id="adminClassBtns"></div>
     </div>
 
@@ -640,7 +639,7 @@ select.float-input.selected{color:var(--charcoal)}
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwWmUyO1Wdl9oi1_bc8GONBy_Q3MijUajpYIL-fg97GxmTBMGopKqMDNfgfpbMX47al/exec';
 const CLASS_LIST = ['선경나라','세희나라','아라나라','애경나라','연옥나라','영실나라','재신나라','정일나라','주영나라','진영나라','현진나라','혜정나라','혜진나라'];
-const CLASS_EMOJI = ['🌱','🌸','🦋','⭐','🌈','🐣','🌻','🍀','🌙','🐬','🦁','🕊️','🌺'];
+const CLASS_EMOJI = ['','','','','','','','','','','','',''];
 
 let selectedFiles = [];
 let albumInited = false;
@@ -682,9 +681,8 @@ function showTimeBlockPopup() {
   el.className = 'time-overlay';
   el.innerHTML = `
     <div class="time-modal">
-      <span style="font-size:3rem;display:block;margin-bottom:16px">⏰</span>
       <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;color:var(--charcoal);margin-bottom:10px">업로드 가능 시간이 아니에요</h2>
-      <p style="font-size:.84rem;color:var(--stone);line-height:1.9;margin-bottom:20px">
+      <p style="font-size:.84rem;color:var(--stone);line-height:1.9;margin-bottom:20px;white-space:pre-wrap">
         현재 시각: <strong>${days[dow]}요일 ${h}:${m}</strong><br>
         업로드 가능: <strong>주일 00:00 ~ 토요일 오전 11:00</strong>
       </p>
@@ -828,17 +826,17 @@ function updateVideoPreview() {
     const url = URL.createObjectURL(imgs[0]);
     vpLeft.innerHTML = `<img src="${url}" class="vp-img"><span class="vp-badge">사진 1</span>`;
   } else {
-    vpLeft.innerHTML = '<div class="vp-empty"><span class="vp-empty-icon">📷</span><span>사진 1</span></div>';
+    vpLeft.innerHTML = '<div class="vp-empty"><span>사진 1</span></div>';
   }
 
   if (vids.length >= 1) {
     const url = URL.createObjectURL(vids[0]);
-    vpRight.innerHTML = `<video src="${url}" class="vp-img" muted autoplay loop playsinline></video><span class="vp-badge">🎬 영상</span>`;
+    vpRight.innerHTML = `<video src="${url}" class="vp-img" muted autoplay loop playsinline></video><span class="vp-badge">영상</span>`;
   } else if (imgs.length >= 2) {
     const url = URL.createObjectURL(imgs[1]);
     vpRight.innerHTML = `<img src="${url}" class="vp-img"><span class="vp-badge">사진 2</span>`;
   } else {
-    vpRight.innerHTML = '<div class="vp-empty"><span class="vp-empty-icon">📷</span><span>사진 2 또는 영상</span></div>';
+    vpRight.innerHTML = '<div class="vp-empty"><span>사진 2 또는 영상</span></div>';
   }
 }
 
@@ -906,13 +904,13 @@ async function doSubmit() {
       })
     );
 
-    textEl.textContent = '🎉 모든 파일 업로드 완료!';
+    textEl.textContent = '모든 파일 업로드 완료!';
     await new Promise(r => setTimeout(r, 700));
     showSuccess(cls, name);
 
   } catch(err) {
     fillEl.style.background = '#E87070';
-    textEl.textContent = '❌ ' + err.message;
+    textEl.textContent = '오류: ' + err.message;
     btn.disabled = false;
     setTimeout(() => {
       wrapEl.style.display = 'none';
@@ -1055,7 +1053,7 @@ function showChildView(className) {
 
   if (Object.keys(children).length === 0) {
     document.getElementById('childView').innerHTML =
-      `<div class="empty-state"><span class="empty-icon">📭</span><p>아직 업로드된 사진이 없어요</p></div>`;
+      `<div class="empty-state"><p>아직 업로드된 사진이 없어요</p></div>`;
   } else {
     let html = '<div class="child-list">';
     Object.keys(children).sort().forEach(child => {
@@ -1111,7 +1109,7 @@ function renderPhotos(data) {
 
   if (allFiles.length === 0) {
     document.getElementById('photoView').innerHTML =
-      `<div class="empty-state"><span class="empty-icon">📭</span><p>사진이 없어요</p></div>`;
+      `<div class="empty-state"><p>사진이 없어요</p></div>`;
     return;
   }
 
@@ -1121,7 +1119,7 @@ function renderPhotos(data) {
     const thumbUrl = `https://drive.google.com/thumbnail?id=${file.id}&sz=w400`;
     const thumb = isImg
       ? `<img src="${thumbUrl}" loading="lazy">`
-      : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#111;color:#888;font-size:2rem">🎬</div>`;
+      : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#111;color:#aaa;font-size:.72rem;letter-spacing:.05em">영상</div>`;
     html += `<div class="photo-item" onclick="openLightbox('${file.id}','${file.mimeType}','${file.child}','${file.week}')">
       ${thumb}
       <div class="photo-type">${isImg ? '사진' : '영상'}</div>
@@ -1280,7 +1278,7 @@ async function loadAdminFiles(className) {
     card.innerHTML = `
       <div class="admin-file-thumb">
         ${isImg ? `<img src="https://drive.google.com/thumbnail?id=${file.id}&sz=w80"
-          onerror="this.parentNode.textContent='📷'">` : '🎬'}
+          onerror="this.parentNode.style.background='var(--cream)'">` : ''}
       </div>
       <div class="admin-file-info">
         <div class="admin-file-name">${file.name}</div>
@@ -1288,9 +1286,9 @@ async function loadAdminFiles(className) {
       </div>
       <div class="admin-file-btns">
         <button class="adbtn adbtn-ren"
-          onclick="openAdmRen('${file.id}','${file.name}')">✏️ 이름</button>
+          onclick="openAdmRen('${file.id}','${file.name}')">이름변경</button>
         <button class="adbtn adbtn-del"
-          onclick="openAdmDel('${file.id}','${file.name}')">🗑️ 삭제</button>
+          onclick="openAdmDel('${file.id}','${file.name}')">삭제</button>
       </div>`;
     list.appendChild(card);
   });
@@ -1525,7 +1523,7 @@ async function adminAddVideo(url) {
   if (titleEl) titleEl.value = '';
 
   renderAdminVideoList();
-  alert('✅ 영상이 추가됐어요!');
+  alert('영상이 추가됐어요!');
 }
 
 function adminDeleteVideo(videoId) {
@@ -1558,7 +1556,7 @@ function renderAdminVideoList() {
         style="padding:5px 10px;border-radius:6px;border:none;
         background:rgba(196,80,80,.1);color:var(--error);
         font-family:inherit;font-size:.72rem;cursor:pointer;flex-shrink:0">
-        🗑️ 삭제
+        삭제
       </button>
     </div>
   `).join('');

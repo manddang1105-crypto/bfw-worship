@@ -330,9 +330,112 @@ select.float-input.selected{color:var(--charcoal)}
 .adm-cancel{background:var(--cream);color:var(--stone)}
 .adm-ok{background:var(--gold-dk);color:white}
 .adm-ok.del{background:var(--error)}
+
+/* ── 배경 플로팅 오브 ── */
+.bg-canvas{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.bg-orb{position:absolute;border-radius:50%;filter:blur(90px);will-change:transform}
+.bg-orb-1{width:560px;height:560px;top:-140px;left:-180px;
+  background:radial-gradient(circle,rgba(184,151,90,.16) 0%,transparent 70%);
+  animation:orb1 20s ease-in-out infinite}
+.bg-orb-2{width:420px;height:420px;bottom:15%;right:-120px;
+  background:radial-gradient(circle,rgba(212,180,122,.13) 0%,transparent 70%);
+  animation:orb2 26s ease-in-out infinite}
+.bg-orb-3{width:320px;height:320px;bottom:-60px;left:25%;
+  background:radial-gradient(circle,rgba(139,110,58,.1) 0%,transparent 70%);
+  animation:orb3 22s ease-in-out infinite}
+@keyframes orb1{
+  0%,100%{transform:translate(0,0) scale(1)}
+  33%{transform:translate(50px,45px) scale(1.07)}
+  66%{transform:translate(-25px,65px) scale(0.93)}
+}
+@keyframes orb2{
+  0%,100%{transform:translate(0,0) scale(1)}
+  40%{transform:translate(-70px,-55px) scale(1.09)}
+  70%{transform:translate(35px,-25px) scale(0.94)}
+}
+@keyframes orb3{
+  0%,100%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(-50px,-70px) scale(1.11)}
+}
+
+/* ── 페이지 전환 ── */
+@keyframes pageIn{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.page.active{animation:pageIn .38s cubic-bezier(.4,0,.2,1) both}
+
+/* ── 카드 순차 등장 ── */
+@keyframes cardIn{
+  from{opacity:0;transform:translateY(14px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.card{animation:cardIn .4s cubic-bezier(.4,0,.2,1) both}
+.card:nth-child(1){animation-delay:.04s}
+.card:nth-child(2){animation-delay:.12s}
+.card:nth-child(3){animation-delay:.20s}
+.card:nth-child(4){animation-delay:.28s}
+.card:nth-child(5){animation-delay:.36s}
+
+/* ── 교회명 골드 shimmer ── */
+@keyframes shimmer{
+  0%{background-position:-200% center}
+  100%{background-position:200% center}
+}
+.church-name{
+  background:linear-gradient(90deg,#8B7355 20%,#D4B47A 45%,#C9A86C 55%,#8B7355 80%);
+  background-size:200% auto;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  animation:shimmer 5s linear infinite
+}
+
+/* ── 업로드 버튼 glow 펄스 ── */
+@keyframes btnGlow{
+  0%,100%{box-shadow:0 6px 24px rgba(184,151,90,.35)}
+  50%{box-shadow:0 6px 32px rgba(184,151,90,.55),0 0 24px 4px rgba(184,151,90,.18)}
+}
+.submit-btn:not(:disabled){animation:btnGlow 2.8s ease-in-out infinite}
+
+/* ── 탭 활성 인디케이터 ── */
+@keyframes dotPop{
+  from{transform:scale(0);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+.tab-btn{position:relative}
+.tab-btn.active::after{
+  content:'';position:absolute;bottom:6px;left:50%;transform:translateX(-50%);
+  width:4px;height:4px;border-radius:50%;background:var(--gold);
+  animation:dotPop .25s cubic-bezier(.4,0,.2,1) both
+}
+
+/* ── period badge 글로우 ── */
+@keyframes badgePulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(184,151,90,0)}
+  50%{box-shadow:0 0 14px 3px rgba(184,151,90,.14)}
+}
+.period-badge{animation:badgePulse 3.5s ease-in-out infinite}
+
+/* ── 카드 hover 리프트 ── */
+.card{transition:box-shadow var(--tr),transform var(--tr)}
+.card:hover{box-shadow:0 12px 48px rgba(44,44,44,.1);transform:translateY(-2px)}
+
+/* ── 헤더 장식선 shimmer ── */
+@keyframes ornShimmer{
+  0%,100%{opacity:.4}50%{opacity:.75}
+}
+.header-ornament{animation:ornShimmer 4s ease-in-out infinite}
+.header-divider{animation:ornShimmer 4s ease-in-out infinite 1s}
 </style>
 </head>
 <body>
+
+<!-- 배경 플로팅 오브 -->
+<div class="bg-canvas" aria-hidden="true">
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+</div>
 
 <!-- 관리자 삭제 팝업 -->
 <div class="adm-popup" id="admDelPopup" style="display:none">
@@ -510,47 +613,20 @@ select.float-input.selected{color:var(--charcoal)}
 
 <!-- ====== 앨범 ====== -->
 <div class="page" id="page-album">
-  <header class="site-header" style="padding:28px 0 16px">
+  <header class="site-header" style="padding:28px 0 20px">
     <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;
-      color:var(--charcoal);text-align:center;margin-bottom:4px">사진 앨범</h2>
-    <p class="album-sub" id="albumSub" style="font-size:.76rem;color:var(--stone-lt);
-      text-align:center;letter-spacing:.1em">반을 선택해 주세요</p>
+      color:var(--charcoal);text-align:center;margin-bottom:4px">가정예배 영상</h2>
+    <p style="font-size:.76rem;color:var(--stone-lt);text-align:center;letter-spacing:.1em">
+      영상을 클릭하면 유튜브로 연결돼요
+    </p>
   </header>
 
-  <!-- 로딩 스피너 -->
-  <div id="albumLoading" style="display:none"><div class="loading-spin"></div></div>
+  <!-- 영상 목록 -->
+  <div id="videoList"></div>
 
-  <!-- 브레드크럼 -->
-  <div class="breadcrumb" id="breadcrumb" style="display:none"></div>
-
-  <!-- 주차 탭 -->
-  <div class="week-tabs" id="weekTabs" style="display:none"></div>
-
-  <!-- 반 목록 뷰 -->
-  <div id="classView"></div>
-
-  <!-- 어린이 목록 뷰 -->
-  <div id="childView" style="display:none"></div>
-
-  <!-- 사진 그리드 뷰 -->
-  <div id="photoView" style="display:none"></div>
-
-  <!-- 구분선 -->
-  <div style="margin:28px 0 20px;display:flex;align-items:center;gap:12px;opacity:.4">
-    <div style="flex:1;height:1px;background:var(--gold)"></div>
-    <span style="font-size:.6rem;color:var(--gold);letter-spacing:4px">✦</span>
-    <div style="flex:1;height:1px;background:var(--gold)"></div>
-  </div>
-
-  <!-- 가정예배 영상 -->
-  <div style="margin-bottom:12px">
-    <h3 style="font-size:.82rem;font-weight:500;color:var(--stone);letter-spacing:.12em;margin-bottom:14px">가정예배 영상</h3>
-    <!-- 영상 목록 -->
-    <div id="videoList"></div>
-    <!-- 빈 상태 -->
-    <div id="videoEmpty" style="text-align:center;padding:32px 24px;color:var(--stone-lt);display:none">
-      <p style="font-size:.85rem">아직 등록된 영상이 없어요</p>
-    </div>
+  <!-- 빈 상태 -->
+  <div id="videoEmpty" style="text-align:center;padding:48px 24px;color:var(--stone-lt);display:none">
+    <p style="font-size:.85rem">아직 등록된 영상이 없어요</p>
   </div>
 </div>
 
@@ -700,7 +776,7 @@ function switchTab(name) {
     b.classList.toggle('active', ['upload','album','admin'][i] === name));
   document.querySelectorAll('.page').forEach(p =>
     p.classList.toggle('active', p.id === 'page-'+name));
-  if (name === 'album') { renderVideoList(); if (!albumInited) initAlbum(); }
+  if (name === 'album') renderVideoList();
   // 관리자 탭 진입시 비밀번호 초기화
   if (name === 'admin' && !adminLoggedIn) {
     document.getElementById('adminLoginSection').style.display = 'block';

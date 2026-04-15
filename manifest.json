@@ -1,0 +1,25 @@
+{
+  "name": "광명교회 영유아부 · 가정예배",
+  "short_name": "가정예배",
+  "description": "광명교회 영유아부 가정예배 사진 업로드",
+  "start_url": "/bfw-worship/",
+  "scope": "/bfw-worship/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAF8F4",
+  "theme_color": "#B8975A",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "/bfw-worship/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/bfw-worship/og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png"
+    }
+  ]
+}

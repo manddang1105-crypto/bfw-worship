@@ -27,6 +27,14 @@
 
   <!-- 카카오톡 추가 메타 -->
   <meta name="description" content="그리도의 형상을 본받아 살아가는 작은예배자 | BFW Little Worshippers">
+<!-- PWA -->
+<link rel="manifest" href="/bfw-worship/manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="가정예배">
+<link rel="apple-touch-icon" href="/bfw-worship/icon.svg">
+<meta name="theme-color" content="#B8975A">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -55,7 +63,7 @@ body{background:var(--ivory);color:var(--charcoal);font-family:'Noto Sans KR',sa
 .page{display:none;max-width:640px;margin:0 auto;padding:0 20px 80px}
 .page.active{display:block}
 
-.site-header{text-align:center;padding:36px 0 24px}
+.site-header{text-align:center;padding:36px 0 24px;position:relative;overflow:hidden}
 .header-ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:14px;opacity:.5}
 .orn-line{height:1px;width:60px;background:linear-gradient(90deg,transparent,var(--gold))}
 .orn-line.r{background:linear-gradient(90deg,var(--gold),transparent)}
@@ -331,6 +339,102 @@ select.float-input.selected{color:var(--charcoal)}
 .adm-ok{background:var(--gold-dk);color:white}
 .adm-ok.del{background:var(--error)}
 
+/* ── 홈 화면 추가 버튼 ── */
+.install-card{
+  display:none;margin-top:12px;padding:14px 18px;
+  background:var(--white);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--sh-sm);cursor:pointer;transition:all var(--tr)}
+.install-card:hover{border-color:var(--gold-lt);box-shadow:var(--sh-md)}
+.install-inner{display:flex;align-items:center;gap:14px}
+.install-icon{width:42px;height:42px;border-radius:10px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dk));
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.install-icon svg{width:22px;height:22px;fill:white}
+.install-text{flex:1}
+.install-title{font-size:.88rem;font-weight:500;color:var(--charcoal)}
+.install-sub{font-size:.72rem;color:var(--stone-lt);margin-top:2px}
+.install-add{padding:8px 16px;border-radius:100px;border:1.5px solid var(--gold);
+  background:transparent;color:var(--gold-dk);font-family:inherit;
+  font-size:.78rem;font-weight:500;cursor:pointer;white-space:nowrap;transition:all var(--tr)}
+.install-add:hover{background:var(--gold);color:white}
+
+/* iOS 안내 팝업 */
+.ios-popup{position:fixed;inset:0;z-index:9999;background:rgba(20,16,12,.75);
+  backdrop-filter:blur(8px);display:none;align-items:flex-end;justify-content:center;padding:20px}
+.ios-popup.show{display:flex}
+.ios-modal{background:white;border-radius:24px 24px 20px 20px;padding:28px 24px;
+  max-width:420px;width:100%;text-align:center}
+.ios-modal h3{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:500;margin-bottom:16px}
+.ios-step{display:flex;align-items:center;gap:12px;padding:10px 0;
+  border-bottom:1px solid var(--border);text-align:left}
+.ios-step:last-of-type{border-bottom:none}
+.ios-step-num{width:26px;height:26px;border-radius:50%;background:var(--gold);
+  color:white;font-size:.78rem;font-weight:600;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0}
+.ios-step-text{font-size:.84rem;color:var(--charcoal);line-height:1.5}
+.ios-close{margin-top:16px;width:100%;padding:13px;border-radius:var(--radius-sm);
+  border:none;background:var(--gold-dk);color:white;font-family:inherit;
+  font-size:.9rem;font-weight:500;cursor:pointer}
+
+/* ── 헤더 십자가 & 빛 줄기 모션 ── */
+.header-motion{position:absolute;inset:0;display:flex;align-items:center;
+  justify-content:center;pointer-events:none;z-index:0}
+.site-header>*:not(.header-motion){position:relative;z-index:1}
+
+/* 후광 */
+.hm-halo{
+  position:absolute;width:260px;height:260px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,180,122,.28) 0%,rgba(184,151,90,.1) 45%,transparent 70%);
+  animation:hmHalo 4s ease-in-out infinite}
+@keyframes hmHalo{
+  0%,100%{transform:scale(1);opacity:.75}
+  50%{transform:scale(1.22);opacity:1}
+}
+
+/* 십자가 SVG */
+.hm-cross{
+  position:absolute;width:110px;height:150px;
+  filter:drop-shadow(0 0 14px rgba(212,180,122,.65)) drop-shadow(0 0 4px rgba(212,180,122,.9));
+  animation:hmCross 4s ease-in-out infinite}
+@keyframes hmCross{
+  0%,100%{opacity:.55;transform:scale(1)}
+  50%{opacity:.9;transform:scale(1.06)}
+}
+
+/* 빛 줄기 - 회전 컨테이너 */
+.hm-rays{position:absolute;width:0;height:0;animation:hmRotate 60s linear infinite}
+.hm-ray{
+  position:absolute;top:0;left:0;
+  height:2px;border-radius:1px;
+  transform-origin:0 50%;
+  background:linear-gradient(to right,rgba(212,180,122,.5),transparent)}
+/* 12개 빛 줄기 - 각도별 */
+.hm-ray:nth-child(1){width:190px;transform:rotate(0deg)}
+.hm-ray:nth-child(2){width:160px;transform:rotate(30deg);opacity:.7}
+.hm-ray:nth-child(3){width:180px;transform:rotate(60deg)}
+.hm-ray:nth-child(4){width:155px;transform:rotate(90deg);opacity:.6}
+.hm-ray:nth-child(5){width:175px;transform:rotate(120deg)}
+.hm-ray:nth-child(6){width:165px;transform:rotate(150deg);opacity:.7}
+.hm-ray:nth-child(7){width:190px;transform:rotate(180deg)}
+.hm-ray:nth-child(8){width:160px;transform:rotate(210deg);opacity:.7}
+.hm-ray:nth-child(9){width:180px;transform:rotate(240deg)}
+.hm-ray:nth-child(10){width:155px;transform:rotate(270deg);opacity:.6}
+.hm-ray:nth-child(11){width:175px;transform:rotate(300deg)}
+.hm-ray:nth-child(12){width:165px;transform:rotate(330deg);opacity:.7}
+@keyframes hmRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+/* 십자가 광택 sweep */
+.hm-sweep{
+  position:absolute;width:110px;height:150px;overflow:hidden;pointer-events:none}
+.hm-sweep::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.22) 48%,rgba(255,255,255,.28) 52%,transparent 70%);
+  animation:hmSweep 4.5s ease-in-out infinite}
+@keyframes hmSweep{
+  0%,100%{transform:translateX(-150%)}
+  60%{transform:translateX(150%)}
+}
+
 /* ── 배경 플로팅 오브 ── */
 .bg-canvas{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
 .bg-orb{position:absolute;border-radius:50%;filter:blur(90px);will-change:transform}
@@ -430,6 +534,27 @@ select.float-input.selected{color:var(--charcoal)}
 </head>
 <body>
 
+<!-- iOS 홈 화면 추가 안내 팝업 -->
+<div class="ios-popup" id="iosPopup">
+  <div class="ios-modal">
+    <h3>홈 화면에 추가하기</h3>
+    <div class="ios-step">
+      <div class="ios-step-num">1</div>
+      <div class="ios-step-text">하단의 <strong>공유 버튼</strong>을 탭하세요<br>
+        <span style="font-size:.72rem;color:var(--stone-lt)">(사각형 + 위쪽 화살표 아이콘)</span></div>
+    </div>
+    <div class="ios-step">
+      <div class="ios-step-num">2</div>
+      <div class="ios-step-text"><strong>홈 화면에 추가</strong>를 선택하세요</div>
+    </div>
+    <div class="ios-step">
+      <div class="ios-step-num">3</div>
+      <div class="ios-step-text">오른쪽 상단 <strong>추가</strong>를 탭하세요</div>
+    </div>
+    <button class="ios-close" onclick="document.getElementById('iosPopup').classList.remove('show')">확인</button>
+  </div>
+</div>
+
 <!-- 배경 플로팅 오브 -->
 <div class="bg-canvas" aria-hidden="true">
   <div class="bg-orb bg-orb-1"></div>
@@ -483,6 +608,37 @@ select.float-input.selected{color:var(--charcoal)}
 <!-- ====== 업로드 ====== -->
 <div class="page active" id="page-upload">
   <header class="site-header">
+    <!-- 십자가 & 빛 줄기 모션 -->
+    <div class="header-motion" aria-hidden="true">
+      <div class="hm-halo"></div>
+      <div class="hm-rays">
+        <div class="hm-ray"></div><div class="hm-ray"></div>
+        <div class="hm-ray"></div><div class="hm-ray"></div>
+        <div class="hm-ray"></div><div class="hm-ray"></div>
+        <div class="hm-ray"></div><div class="hm-ray"></div>
+        <div class="hm-ray"></div><div class="hm-ray"></div>
+        <div class="hm-ray"></div><div class="hm-ray"></div>
+      </div>
+      <svg class="hm-cross" viewBox="0 0 80 110" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="cg-v" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#EDD98A" stop-opacity="1"/>
+            <stop offset="40%" stop-color="#D4B47A" stop-opacity="0.95"/>
+            <stop offset="100%" stop-color="#8B6E3A" stop-opacity="0.3"/>
+          </linearGradient>
+          <linearGradient id="cg-h" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#8B6E3A" stop-opacity="0.3"/>
+            <stop offset="50%" stop-color="#EDD98A" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#8B6E3A" stop-opacity="0.3"/>
+          </linearGradient>
+        </defs>
+        <!-- 세로 -->
+        <rect x="33" y="0" width="14" height="110" rx="3" fill="url(#cg-v)"/>
+        <!-- 가로 -->
+        <rect x="0" y="26" width="80" height="14" rx="3" fill="url(#cg-h)"/>
+      </svg>
+      <div class="hm-sweep"></div>
+    </div>
     <div class="header-ornament">
       <div class="orn-line"></div><span style="color:var(--gold);font-size:.9rem">✦</span>
       <div class="orn-line r"></div>
@@ -596,6 +752,21 @@ select.float-input.selected{color:var(--charcoal)}
           <div class="progress-fill" id="progressFill"></div>
         </div>
         <p class="progress-text" id="progressText">준비 중...</p>
+      </div>
+      <!-- 홈 화면 추가 버튼 -->
+      <div class="install-card" id="installCard">
+        <div class="install-inner">
+          <div class="install-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17 1.01L7 1c-1.1 0-1.99.9-1.99 2v18c0 1.1.89 2 1.99 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14zm-5-4l4-4h-3V8h-2v3H8z"/>
+            </svg>
+          </div>
+          <div class="install-text">
+            <div class="install-title">홈 화면에 추가하기</div>
+            <div class="install-sub">앱처럼 바로 접속할 수 있어요</div>
+          </div>
+          <button class="install-add" onclick="triggerInstall()">추가</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1641,6 +1812,44 @@ function renderAdminVideoList() {
 // ── INIT ──
 checkUploadTime();
 setInterval(checkUploadTime, 60000);
+
+// ── PWA INSTALL ──
+let deferredInstallPrompt = null;
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || !!window.navigator.standalone;
+
+function showInstallCard() {
+  const card = document.getElementById('installCard');
+  if (card && !isStandalone) card.style.display = 'block';
+}
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  showInstallCard();
+});
+
+function triggerInstall() {
+  if (deferredInstallPrompt) {
+    deferredInstallPrompt.prompt();
+    deferredInstallPrompt.userChoice.then(choice => {
+      if (choice.outcome === 'accepted') {
+        document.getElementById('installCard').style.display = 'none';
+      }
+      deferredInstallPrompt = null;
+    });
+  } else if (isIOS) {
+    document.getElementById('iosPopup').classList.add('show');
+  }
+}
+
+if (isIOS && !isStandalone) {
+  showInstallCard();
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/bfw-worship/sw.js');
+}
 </script>
   <!-- 푸터 -->
   <div style="text-align:center;padding:28px 0 40px;border-top:1px solid var(--border);margin-top:20px">

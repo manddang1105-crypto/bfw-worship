@@ -10,10 +10,10 @@
 
   <!-- OG 메타태그 (카카오톡/문자/SNS 공유 썸네일) -->
   <meta property="og:type"        content="website">
-  <meta property="og:url"         content="https://bfwfamilyworship.netlify.app/">
+  <meta property="og:url"         content="https://manddang1105-crypto.github.io/bfw-worship/">
   <meta property="og:title"       content="광명교회 영유아부 · 가정예배">
   <meta property="og:description" content="그리도의 형상을 본받아 살아가는 작은예배자 | BFW Little Worshippers">
-  <meta property="og:image"       content="https://bfwfamilyworship.netlify.app/og-image.png">
+  <meta property="og:image"       content="https://manddang1105-crypto.github.io/bfw-worship/og-image.png">
   <meta property="og:image:width"  content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:locale"      content="ko_KR">
@@ -23,7 +23,7 @@
   <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:title"       content="광명교회 영유아부 · 가정예배">
   <meta name="twitter:description" content="그리도의 형상을 본받아 살아가는 작은예배자">
-  <meta name="twitter:image"       content="https://bfwfamilyworship.netlify.app/og-image.png">
+  <meta name="twitter:image"       content="https://manddang1105-crypto.github.io/bfw-worship/og-image.png">
 
   <!-- 카카오톡 추가 메타 -->
   <meta name="description" content="그리도의 형상을 본받아 살아가는 작은예배자 | BFW Little Worshippers">
@@ -288,6 +288,8 @@ select.float-input.selected{color:var(--charcoal)}
 .time-popup{position:fixed;inset:0;z-index:9999;background:rgba(28,24,20,.75);
   backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:24px}
 .time-popup.show{display:flex}
+.time-overlay{position:fixed;inset:0;z-index:9999;background:rgba(28,24,20,.75);
+  backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:24px}
 .time-modal{background:white;border-radius:24px;padding:44px 32px;max-width:420px;
   width:100%;text-align:center;box-shadow:0 24px 80px rgba(44,44,44,.22)}
 .time-modal-icon{font-size:3rem;display:block;margin-bottom:20px}
@@ -508,21 +510,48 @@ select.float-input.selected{color:var(--charcoal)}
 
 <!-- ====== 앨범 ====== -->
 <div class="page" id="page-album">
-  <header class="site-header" style="padding:28px 0 20px">
+  <header class="site-header" style="padding:28px 0 16px">
     <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;
-      color:var(--charcoal);text-align:center;margin-bottom:4px">가정예배 영상</h2>
-    <p style="font-size:.76rem;color:var(--stone-lt);text-align:center;letter-spacing:.1em">
-      영상을 클릭하면 유튜브로 연결돼요
-    </p>
+      color:var(--charcoal);text-align:center;margin-bottom:4px">📸 사진 앨범</h2>
+    <p class="album-sub" id="albumSub" style="font-size:.76rem;color:var(--stone-lt);
+      text-align:center;letter-spacing:.1em">반을 선택해 주세요</p>
   </header>
 
-  <!-- 영상 목록 -->
-  <div id="videoList"></div>
+  <!-- 로딩 스피너 -->
+  <div id="albumLoading" style="display:none"><div class="loading-spin"></div></div>
 
-  <!-- 빈 상태 -->
-  <div id="videoEmpty" style="text-align:center;padding:48px 24px;color:var(--stone-lt);display:none">
-    <span style="font-size:2.5rem;display:block;margin-bottom:12px;opacity:.5">🎬</span>
-    <p style="font-size:.85rem">아직 등록된 영상이 없어요</p>
+  <!-- 브레드크럼 -->
+  <div class="breadcrumb" id="breadcrumb" style="display:none"></div>
+
+  <!-- 주차 탭 -->
+  <div class="week-tabs" id="weekTabs" style="display:none"></div>
+
+  <!-- 반 목록 뷰 -->
+  <div id="classView"></div>
+
+  <!-- 어린이 목록 뷰 -->
+  <div id="childView" style="display:none"></div>
+
+  <!-- 사진 그리드 뷰 -->
+  <div id="photoView" style="display:none"></div>
+
+  <!-- 구분선 -->
+  <div style="margin:28px 0 20px;display:flex;align-items:center;gap:12px;opacity:.4">
+    <div style="flex:1;height:1px;background:var(--gold)"></div>
+    <span style="font-size:.6rem;color:var(--gold);letter-spacing:4px">✦</span>
+    <div style="flex:1;height:1px;background:var(--gold)"></div>
+  </div>
+
+  <!-- 가정예배 영상 -->
+  <div style="margin-bottom:12px">
+    <h3 style="font-size:.82rem;font-weight:500;color:var(--stone);letter-spacing:.12em;margin-bottom:14px">🎬 가정예배 영상</h3>
+    <!-- 영상 목록 -->
+    <div id="videoList"></div>
+    <!-- 빈 상태 -->
+    <div id="videoEmpty" style="text-align:center;padding:32px 24px;color:var(--stone-lt);display:none">
+      <span style="font-size:2.5rem;display:block;margin-bottom:12px;opacity:.5">🎬</span>
+      <p style="font-size:.85rem">아직 등록된 영상이 없어요</p>
+    </div>
   </div>
 </div>
 
@@ -609,7 +638,7 @@ select.float-input.selected{color:var(--charcoal)}
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbykFlwgoXvwbaXsvebgLCf0VJ7AjrSuY-JWUVwqZys9TkceIJouYWRmLq7nPGGFY5k/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwWmUyO1Wdl9oi1_bc8GONBy_Q3MijUajpYIL-fg97GxmTBMGopKqMDNfgfpbMX47al/exec';
 const CLASS_LIST = ['선경나라','세희나라','아라나라','애경나라','연옥나라','영실나라','재신나라','정일나라','주영나라','진영나라','현진나라','혜정나라','혜진나라'];
 const CLASS_EMOJI = ['🌱','🌸','🦋','⭐','🌈','🐣','🌻','🍀','🌙','🐬','🦁','🕊️','🌺'];
 
@@ -673,7 +702,7 @@ function switchTab(name) {
     b.classList.toggle('active', ['upload','album','admin'][i] === name));
   document.querySelectorAll('.page').forEach(p =>
     p.classList.toggle('active', p.id === 'page-'+name));
-  if (name === 'album') renderVideoList();
+  if (name === 'album') { renderVideoList(); if (!albumInited) initAlbum(); }
   // 관리자 탭 진입시 비밀번호 초기화
   if (name === 'admin' && !adminLoggedIn) {
     document.getElementById('adminLoginSection').style.display = 'block';
@@ -823,65 +852,59 @@ async function doSubmit() {
   const wrapEl = document.getElementById('progressWrap');
   const fillEl = document.getElementById('progressFill');
   const textEl = document.getElementById('progressText');
+  const total  = selectedFiles.length;
 
   btn.disabled = true;
   wrapEl.style.cssText = 'display:block!important;margin-top:14px;padding:16px;background:#FAF8F4;border:1px solid #E0D8CC;border-radius:10px';
   fillEl.style.width = '0%';
   textEl.textContent = '업로드 준비 중...';
 
+  // 각 파일별 진행률 추적 (병렬 처리용)
+  const progresses = new Array(total).fill(0);
+  const updateProgress = () => {
+    const avg = progresses.reduce((a, b) => a + b, 0) / total;
+    fillEl.style.width = avg + '%';
+  };
+
   try {
-    for (let i = 0; i < selectedFiles.length; i++) {
-      const file  = selectedFiles[i];
-      const isVid = file.type.startsWith('video/');
-      const label = isVid ? '영상' : '사진';
+    // ① 모든 파일 병렬 압축
+    textEl.textContent = total > 1 ? `사진 ${total}개 동시 압축 중...` : '사진 압축 중...';
+    const processedFiles = await Promise.all(
+      selectedFiles.map(async (file, i) => {
+        const isVid = file.type.startsWith('video/');
+        let uploadFile = file;
+        let ext = file.name.split('.').pop().toLowerCase();
+        if (!isVid) { uploadFile = await compressImage(file); ext = 'jpg'; }
+        progresses[i] = 20; updateProgress();
+        const fname = i === 0 ? `${cls} ${name}.${ext}` : `${cls} ${name}-${i+1}.${ext}`;
+        return { uploadFile, fname, mimeType: isVid ? file.type : 'image/jpeg' };
+      })
+    );
 
-      // 사진은 압축, 영상은 그대로
-      let uploadFile = file;
-      let ext = file.name.split('.').pop().toLowerCase();
+    // ② 모든 파일 병렬 base64 변환 + 업로드
+    textEl.textContent = total > 1 ? `${total}개 파일 동시 전송 중...` : '파일 전송 중...';
+    await Promise.all(
+      processedFiles.map(async ({ uploadFile, fname, mimeType }, i) => {
+        // base64 변환
+        const b64 = await new Promise((res, rej) => {
+          const r = new FileReader();
+          r.onload  = () => res(r.result.split(',')[1]);
+          r.onerror = () => rej(new Error('파일 읽기 실패'));
+          r.readAsDataURL(uploadFile);
+        });
+        progresses[i] = 60; updateProgress();
 
-      if (!isVid) {
-        textEl.textContent = `사진 ${i+1}/${selectedFiles.length} 압축 중...`;
-        fillEl.style.width = '10%';
-        uploadFile = await compressImage(file);
-        ext = 'jpg';
-      }
-
-      const fname = i === 0 ? `${cls} ${name}.${ext}` : `${cls} ${name}-${i+1}.${ext}`;
-
-      // 파일 읽기
-      textEl.textContent = `${label} ${i+1}/${selectedFiles.length} 읽는 중...`;
-      const b64 = await new Promise((res, rej) => {
-        const r = new FileReader();
-        r.onprogress = (e) => {
-          if (e.lengthComputable) {
-            fillEl.style.width = Math.round(15 + (e.loaded/e.total)*50) + '%';
-            textEl.textContent = `${label} ${i+1}/${selectedFiles.length} 읽는 중... ${Math.round((e.loaded/e.total)*100)}%`;
-          }
-        };
-        r.onload  = () => res(r.result.split(',')[1]);
-        r.onerror = () => rej(new Error('파일 읽기 실패'));
-        r.readAsDataURL(uploadFile);
-      });
-
-      // 전송
-      fillEl.style.width = '70%';
-      textEl.textContent = `${label} ${i+1}/${selectedFiles.length} 전송 중...`;
-
-      await fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          className: cls,
-          childName: name,
-          files: [{ name: fname, mimeType: isVid ? file.type : 'image/jpeg', base64: b64 }]
-        })
-      });
-
-      fillEl.style.width = '100%';
-      textEl.textContent = `${label} ${i+1}/${selectedFiles.length} ✅ 완료`;
-      await new Promise(r => setTimeout(r, 300));
-    }
+        // 전송
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ className: cls, childName: name,
+            files: [{ name: fname, mimeType, base64: b64 }] })
+        });
+        progresses[i] = 100; updateProgress();
+      })
+    );
 
     textEl.textContent = '🎉 모든 파일 업로드 완료!';
     await new Promise(r => setTimeout(r, 700));
@@ -899,48 +922,43 @@ async function doSubmit() {
   }
 }
 
-// 이미지 압축 함수 - 사진 전송 크기 최소화
-function compressImage(file, maxWidth=1920, quality=0.82) {
-  return new Promise((resolve) => {
-    // 영상은 압축 없이 그대로
-    if (!file.type.startsWith('image/')) { resolve(file); return; }
+// 이미지 압축 함수 - createImageBitmap으로 빠른 디코딩 + 1280px/0.75q로 크기 최소화
+async function compressImage(file, maxWidth=1280, quality=0.75) {
+  if (!file.type.startsWith('image/')) return file;
 
+  const drawAndBlob = (source) => new Promise((resolve) => {
+    const canvas = document.createElement('canvas');
+    let w = source.width || source.naturalWidth;
+    let h = source.height || source.naturalHeight;
+    if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(source, 0, 0, w, h);
+    if (source.close) source.close(); // ImageBitmap 메모리 해제
+    canvas.toBlob((blob) => {
+      resolve(new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' }));
+    }, 'image/jpeg', quality);
+  });
+
+  // createImageBitmap: FileReader+Image 방식보다 훨씬 빠름 (브라우저 네이티브 디코딩)
+  if (typeof createImageBitmap !== 'undefined') {
+    try {
+      const bitmap = await createImageBitmap(file);
+      return drawAndBlob(bitmap);
+    } catch { /* 지원 안 하는 경우 fallback */ }
+  }
+
+  // Fallback: 구형 브라우저용
+  return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        let w = img.width, h = img.height;
-
-        // 최대 너비 초과 시 비율 유지하며 축소
-        if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
-
-        canvas.width = w; canvas.height = h;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, w, h);
-
-        // JPEG로 압축 (PNG도 JPEG로 변환해서 크기 절감)
-        const mimeOut = 'image/jpeg';
-        canvas.toBlob((blob) => {
-          const compressed = new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: mimeOut });
-          console.log(`압축: ${(file.size/1024).toFixed(0)}KB → ${(compressed.size/1024).toFixed(0)}KB`);
-          resolve(compressed);
-        }, mimeOut, quality);
-      };
+      img.onload = () => resolve(drawAndBlob(img));
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
   });
 }
 
-function fileToBase64(file) {
-  return new Promise((res, rej) => {
-    const reader = new FileReader();
-    reader.onload = () => res(reader.result.split(',')[1]);
-    reader.onerror = rej;
-    reader.readAsDataURL(file);
-  });
-}
 
 function showSuccess(cls, name) {
   document.getElementById('uploadForm').style.display = 'none';
@@ -979,6 +997,7 @@ async function initAlbum() {
     if (!data.success) throw new Error(data.error);
     albumData = data.data;
   } catch(err) {
+    albumInited = false; // 오류 시 재시도 허용
     albumData = [];
   }
   document.getElementById('albumLoading').style.display = 'none';
@@ -1231,7 +1250,7 @@ async function loadAdminClassBtns() {
       color:${cnt ? 'var(--gold-dk)' : 'var(--stone-lt)'};
       font-family:inherit;font-size:.8rem;cursor:pointer;
       display:inline-flex;align-items:center;gap:5px;margin:2px`;
-    btn.innerHTML = `<span>${CLASS_EMOJIS[i]}</span><span>${cls}</span>
+    btn.innerHTML = `<span>${CLASS_EMOJI[i]}</span><span>${cls}</span>
       ${cnt ? `<span style="font-size:.68rem;opacity:.7">${cnt}개</span>` : ''}`;
     btn.onclick = () => loadAdminFiles(cls);
     wrap.appendChild(btn);

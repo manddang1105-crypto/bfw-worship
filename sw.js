@@ -1,8 +1,10 @@
-const CACHE = 'bfw-worship-v1';
+const CACHE = 'bfw-worship-v2';
 const ASSETS = [
   '/bfw-worship/',
   '/bfw-worship/index.html',
   '/bfw-worship/icon.svg',
+  '/bfw-worship/icon-192.png',
+  '/bfw-worship/icon-512.png',
   '/bfw-worship/og-image.png',
   '/bfw-worship/manifest.json'
 ];

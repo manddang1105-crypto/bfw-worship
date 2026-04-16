@@ -1,13 +1,13 @@
 {
-  "name": "광명교회 영유아부 · 가정예배",
-  "short_name": "가정예배",
+  "name": "BFW가정예배",
+  "short_name": "BFW가정예배",
   "description": "광명교회 영유아부 가정예배 사진 업로드",
   "start_url": "/bfw-worship/",
   "scope": "/bfw-worship/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FAF8F4",
-  "theme_color": "#B8975A",
+  "background_color": "#FBF8F3",
+  "theme_color": "#8BAF7C",
   "lang": "ko",
   "icons": [
     {

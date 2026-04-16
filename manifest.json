@@ -1,6 +1,6 @@
 {
-  "name": "BFW가정예배",
-  "short_name": "BFW가정예배",
+  "name": "BFC가정예배",
+  "short_name": "BFC가정예배",
   "description": "광명교회 영유아부 가정예배 사진 업로드",
   "start_url": "/bfw-worship/",
   "scope": "/bfw-worship/",

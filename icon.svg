@@ -33,5 +33,5 @@
   <rect x="96" y="168" width="320" height="64" rx="14" fill="url(#ch)" filter="url(#glow)"/>
   <!-- 하단 교회명 -->
   <text x="256" y="490" font-family="Georgia, serif" font-size="38" font-weight="400"
-    fill="#B8975A" text-anchor="middle" letter-spacing="6" opacity="0.9">BFW</text>
+    fill="#B8975A" text-anchor="middle" letter-spacing="6" opacity="0.9">BFC</text>
 </svg>

@@ -1164,18 +1164,21 @@ async function doSubmit() {
       processedFiles.push({ uploadFile, fname, mimeType: isVid ? file.type : 'image/jpeg' });
     }
 
-    // ② 모든 파일 병렬 base64 변환 + 업로드
-    textEl.textContent = total > 1 ? `${total}개 파일 동시 전송 중...` : '파일 전송 중...';
-    await Promise.all(
-      processedFiles.map(async ({ uploadFile, fname, mimeType }, i) => {
-        // base64 변환
-        const b64 = await new Promise((res, rej) => {
-          const r = new FileReader();
-          r.onload  = () => res(r.result.split(',')[1]);
-          r.onerror = () => rej(new Error('파일 읽기 실패'));
-          r.readAsDataURL(uploadFile);
-        });
-        progresses[i] = 60; updateProgress();
+    // ② 파일 순차 base64 변환 + 업로드 (Samsung WebView에서 FileReader 동시 실행 시 충돌 방지)
+    for (let i = 0; i < processedFiles.length; i++) {
+      const { uploadFile, fname, mimeType } = processedFiles[i];
+      textEl.textContent = total > 1 ? `파일 전송 중... (${i+1}/${total})` : '파일 전송 중...';
+
+      // base64 변환 (arrayBuffer 사용 - FileReader 동시 실행 충돌 없음)
+      const arrayBuffer = await uploadFile.arrayBuffer();
+      const bytes = new Uint8Array(arrayBuffer);
+      let binary = '';
+      const chunkSize = 8192;
+      for (let j = 0; j < bytes.length; j += chunkSize) {
+        binary += String.fromCharCode(...bytes.subarray(j, j + chunkSize));
+      }
+      const b64 = btoa(binary);
+      progresses[i] = 60; updateProgress();
 
         // 전송 (60초 타임아웃)
         const controller = new AbortController();
@@ -1192,9 +1195,8 @@ async function doSubmit() {
         } finally {
           clearTimeout(fetchTimeout);
         }
-        progresses[i] = 100; updateProgress();
-      })
-    );
+      progresses[i] = 100; updateProgress();
+    }
 
     textEl.textContent = '모든 파일 업로드 완료!';
     await new Promise(r => setTimeout(r, 700));

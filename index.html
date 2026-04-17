@@ -1223,12 +1223,32 @@ async function doSubmit() {
     fillEl.style.background = '#E87070';
     textEl.textContent = '오류: ' + err.message;
     btn.disabled = false;
+    // 오류 자동 보고
+    reportError(err.message, cls, name, textEl.textContent);
     setTimeout(() => {
       wrapEl.style.display = 'none';
       fillEl.style.background = '';
       fillEl.style.width = '0%';
     }, 5000);
   }
+}
+
+function reportError(message, cls, name, step) {
+  try {
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'logError',
+        error: message,
+        className: cls || '',
+        childName: name || '',
+        step: step || '',
+        userAgent: navigator.userAgent
+      })
+    });
+  } catch(e) {}
 }
 
 // 이미지 압축 함수 - createImageBitmap으로 빠른 디코딩 + 1280px/0.75q로 크기 최소화

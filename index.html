@@ -1060,12 +1060,23 @@ function renderPreviews() {
       const img = document.createElement('img');
       img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
       img.src = url;
+      // KakaoTalk WebView 등 blob URL 지원 안 하는 경우 FileReader로 fallback
+      img.onerror = () => {
+        const r = new FileReader();
+        r.onload = (e) => { img.src = e.target.result; };
+        r.readAsDataURL(file);
+      };
       card.appendChild(img);
     } else {
       const video = document.createElement('video');
       video.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
       video.muted = true; video.loop = true; video.autoplay = true; video.playsInline = true;
       video.src = url;
+      video.onerror = () => {
+        const r = new FileReader();
+        r.onload = (e) => { video.src = e.target.result; };
+        r.readAsDataURL(file);
+      };
       card.appendChild(video);
     }
 
@@ -1103,6 +1114,12 @@ function updateVideoPreview() {
     el.src = url;
     el.className = 'vp-img';
     if (isVideo) { el.muted = true; el.loop = true; el.autoplay = true; el.playsInline = true; }
+    // KakaoTalk WebView 등 blob URL 지원 안 하는 경우 FileReader로 fallback
+    el.onerror = () => {
+      const r = new FileReader();
+      r.onload = (e) => { el.src = e.target.result; };
+      r.readAsDataURL(file);
+    };
     const span = document.createElement('span');
     span.className = 'vp-badge';
     span.textContent = badge;

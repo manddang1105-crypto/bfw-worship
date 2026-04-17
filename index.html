@@ -1233,6 +1233,26 @@ async function doSubmit() {
   }
 }
 
+function openReportPopup() {
+  document.getElementById('reportMsg').value = '';
+  document.getElementById('reportResult').style.display = 'none';
+  document.getElementById('reportPopup').style.display = 'flex';
+}
+
+function closeReportPopup() {
+  document.getElementById('reportPopup').style.display = 'none';
+}
+
+async function submitReport() {
+  const msg = document.getElementById('reportMsg').value.trim();
+  if (!msg) return;
+  const cls = document.getElementById('classInput')?.value || '';
+  const name = document.getElementById('childNameInput')?.value || '';
+  await reportError(msg, cls, name, '사용자 신고');
+  document.getElementById('reportResult').style.display = 'block';
+  setTimeout(closeReportPopup, 2000);
+}
+
 function reportError(message, cls, name, step) {
   try {
     fetch(SCRIPT_URL, {
@@ -1968,6 +1988,36 @@ if ('serviceWorker' in navigator) {
       letter-spacing:.15em;font-weight:400">
       BFW <span style="color:var(--gold);font-weight:500">Little Worshippers</span>
     </p>
+    <button onclick="openReportPopup()"
+      style="margin-top:12px;background:none;border:1px solid var(--border);border-radius:100px;
+      padding:6px 18px;font-size:.75rem;color:var(--stone-lt);cursor:pointer">
+      문의 / 오류 신고
+    </button>
+  </div>
+
+  <!-- 오류 신고 팝업 -->
+  <div id="reportPopup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;
+    display:none;align-items:center;justify-content:center;padding:24px">
+    <div style="background:#fff;border-radius:16px;padding:24px;width:100%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.18)">
+      <h3 style="font-size:1rem;font-weight:600;margin:0 0 6px">문의 / 오류 신고</h3>
+      <p style="font-size:.8rem;color:var(--stone-lt);margin:0 0 14px">어떤 문제가 있었는지 알려주세요.<br>담당자에게 자동으로 전달됩니다.</p>
+      <textarea id="reportMsg" placeholder="예) 사진 업로드가 안 돼요 / 미리보기가 안 보여요"
+        style="width:100%;height:100px;border:1px solid var(--border);border-radius:10px;
+        padding:10px;font-size:.85rem;resize:none;box-sizing:border-box;font-family:inherit"></textarea>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button onclick="closeReportPopup()"
+          style="flex:1;padding:11px;border:1px solid var(--border);border-radius:10px;
+          background:#fff;font-size:.88rem;cursor:pointer;color:var(--stone)">취소</button>
+        <button onclick="submitReport()"
+          style="flex:2;padding:11px;border:none;border-radius:10px;
+          background:var(--sage-dk);color:#fff;font-size:.88rem;font-weight:600;cursor:pointer">
+          전송하기
+        </button>
+      </div>
+      <p id="reportResult" style="font-size:.78rem;text-align:center;margin:10px 0 0;color:var(--sage-dk);display:none">
+        신고가 전달되었습니다. 감사합니다!
+      </p>
+    </div>
   </div>
 
 </body>

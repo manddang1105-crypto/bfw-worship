@@ -905,6 +905,7 @@ const CLASS_LIST = ['선경나라','세희나라','아라나라','애경나라',
 const CLASS_EMOJI = ['','','','','','','','','','','','',''];
 
 let selectedFiles = [];
+let previewURLs = []; // createObjectURL로 생성한 URL 추적 (메모리 해제용)
 let albumInited = false;
 let albumData = [];
 let currentClass = null;
@@ -1038,28 +1039,32 @@ function handleFiles(files) {
   checkReady();
 }
 
+function revokePreviewURLs() {
+  previewURLs.forEach(u => URL.revokeObjectURL(u));
+  previewURLs = [];
+}
+
 function renderPreviews() {
+  revokePreviewURLs();
   const grid = document.getElementById('previewGrid');
   grid.innerHTML = '';
   selectedFiles.forEach((file, i) => {
     const card = document.createElement('div');
     card.className = 'preview-card';
     const isImg = file.type.startsWith('image/');
+    const url = URL.createObjectURL(file);
+    previewURLs.push(url);
 
     if (isImg) {
       const img = document.createElement('img');
       img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
-      const reader = new FileReader();
-      reader.onload = (e) => { img.src = e.target.result; };
-      reader.readAsDataURL(file);
+      img.src = url;
       card.appendChild(img);
     } else {
       const video = document.createElement('video');
       video.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
       video.muted = true; video.loop = true; video.autoplay = true; video.playsInline = true;
-      const reader = new FileReader();
-      reader.onload = (e) => { video.src = e.target.result; };
-      reader.readAsDataURL(file);
+      video.src = url;
       card.appendChild(video);
     }
 
@@ -1128,19 +1133,19 @@ async function doSubmit() {
   };
 
   try {
-    // ① 모든 파일 병렬 압축
-    textEl.textContent = total > 1 ? `사진 ${total}개 동시 압축 중...` : '사진 압축 중...';
-    const processedFiles = await Promise.all(
-      selectedFiles.map(async (file, i) => {
-        const isVid = file.type.startsWith('video/');
-        let uploadFile = file;
-        let ext = file.name.split('.').pop().toLowerCase();
-        if (!isVid) { uploadFile = await compressImage(file); ext = 'jpg'; }
-        progresses[i] = 20; updateProgress();
-        const fname = i === 0 ? `${cls} ${name}.${ext}` : `${cls} ${name}-${i+1}.${ext}`;
-        return { uploadFile, fname, mimeType: isVid ? file.type : 'image/jpeg' };
-      })
-    );
+    // ① 파일 순차 압축 (병렬로 하면 모바일에서 메모리 부족으로 멈출 수 있음)
+    const processedFiles = [];
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const file = selectedFiles[i];
+      textEl.textContent = total > 1 ? `사진 압축 중... (${i+1}/${total})` : '사진 압축 중...';
+      const isVid = file.type.startsWith('video/');
+      let uploadFile = file;
+      let ext = file.name.split('.').pop().toLowerCase();
+      if (!isVid) { uploadFile = await compressImage(file); ext = 'jpg'; }
+      progresses[i] = 20; updateProgress();
+      const fname = i === 0 ? `${cls} ${name}.${ext}` : `${cls} ${name}-${i+1}.${ext}`;
+      processedFiles.push({ uploadFile, fname, mimeType: isVid ? file.type : 'image/jpeg' });
+    }
 
     // ② 모든 파일 병렬 base64 변환 + 업로드
     textEl.textContent = total > 1 ? `${total}개 파일 동시 전송 중...` : '파일 전송 중...';
@@ -1155,14 +1160,21 @@ async function doSubmit() {
         });
         progresses[i] = 60; updateProgress();
 
-        // 전송
-        await fetch(SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ className: cls, childName: name,
-            files: [{ name: fname, mimeType, base64: b64 }] })
-        });
+        // 전송 (60초 타임아웃)
+        const controller = new AbortController();
+        const fetchTimeout = setTimeout(() => controller.abort(), 60000);
+        try {
+          await fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ className: cls, childName: name,
+              files: [{ name: fname, mimeType, base64: b64 }] }),
+            signal: controller.signal
+          });
+        } finally {
+          clearTimeout(fetchTimeout);
+        }
         progresses[i] = 100; updateProgress();
       })
     );
@@ -1187,7 +1199,7 @@ async function doSubmit() {
 async function compressImage(file, maxWidth=1280, quality=0.75) {
   if (!file.type.startsWith('image/')) return file;
 
-  const drawAndBlob = (source) => new Promise((resolve) => {
+  const drawAndBlob = (source) => new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas');
     let w = source.width || source.naturalWidth;
     let h = source.height || source.naturalHeight;
@@ -1195,7 +1207,10 @@ async function compressImage(file, maxWidth=1280, quality=0.75) {
     canvas.width = w; canvas.height = h;
     canvas.getContext('2d').drawImage(source, 0, 0, w, h);
     if (source.close) source.close(); // ImageBitmap 메모리 해제
+    const timeout = setTimeout(() => reject(new Error('toBlob timeout')), 15000);
     canvas.toBlob((blob) => {
+      clearTimeout(timeout);
+      if (!blob) { reject(new Error('toBlob failed')); return; }
       resolve(new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' }));
     }, 'image/jpeg', quality);
   });
@@ -1204,20 +1219,27 @@ async function compressImage(file, maxWidth=1280, quality=0.75) {
   if (typeof createImageBitmap !== 'undefined') {
     try {
       const bitmap = await createImageBitmap(file);
-      return drawAndBlob(bitmap);
-    } catch { /* 지원 안 하는 경우 fallback */ }
+      return await drawAndBlob(bitmap);
+    } catch { /* 지원 안 하거나 실패 시 fallback */ }
   }
 
   // Fallback: 구형 브라우저용
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => resolve(drawAndBlob(img));
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
+  try {
+    return await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error('FileReader 실패'));
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onerror = () => reject(new Error('이미지 로드 실패'));
+        img.onload = () => resolve(drawAndBlob(img));
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  } catch {
+    // 압축 실패 시 원본 반환
+    return file;
+  }
 }
 
 
@@ -1230,6 +1252,7 @@ function showSuccess(cls, name) {
 }
 
 function resetForm() {
+  revokePreviewURLs();
   selectedFiles = [];
   document.getElementById('classInput').value = '';
   document.getElementById('classInput').classList.remove('selected');

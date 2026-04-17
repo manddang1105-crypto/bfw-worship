@@ -796,6 +796,19 @@ select.float-input.selected{color:var(--charcoal)}
     <p style="font-size:.84rem;color:var(--stone);line-height:1.8">파일이 성공적으로 저장되었습니다.<br>선생님, 항상 감사합니다.</p>
     <button class="reset-btn" onclick="resetForm()">다른 어린이 추가하기</button>
   </div>
+
+  <!-- 푸터 -->
+  <div style="text-align:center;padding:28px 0 40px;border-top:1px solid var(--border);margin-top:20px">
+    <p style="font-family:'Cormorant Garamond',serif;font-size:.9rem;color:var(--stone-lt);
+      letter-spacing:.15em;font-weight:400">
+      BFW <span style="color:var(--gold);font-weight:500">Little Worshippers</span>
+    </p>
+    <button onclick="openReportPopup()"
+      style="margin-top:12px;background:none;border:1px solid var(--border);border-radius:100px;
+      padding:6px 18px;font-size:.75rem;color:var(--stone-lt);cursor:pointer">
+      문의 / 오류 신고
+    </button>
+  </div>
 </div>
 
 <!-- ====== 앨범 ====== -->
@@ -2014,18 +2027,6 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/bfw-worship/sw.js');
 }
 </script>
-  <!-- 푸터 -->
-  <div style="text-align:center;padding:28px 0 40px;border-top:1px solid var(--border);margin-top:20px">
-    <p style="font-family:'Cormorant Garamond',serif;font-size:.9rem;color:var(--stone-lt);
-      letter-spacing:.15em;font-weight:400">
-      BFW <span style="color:var(--gold);font-weight:500">Little Worshippers</span>
-    </p>
-    <button onclick="openReportPopup()"
-      style="margin-top:12px;background:none;border:1px solid var(--border);border-radius:100px;
-      padding:6px 18px;font-size:.75rem;color:var(--stone-lt);cursor:pointer">
-      문의 / 오류 신고
-    </button>
-  </div>
 
   <!-- 오류 신고 팝업 -->
   <div id="reportPopup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;

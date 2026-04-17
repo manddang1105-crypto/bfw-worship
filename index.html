@@ -906,6 +906,7 @@ const CLASS_EMOJI = ['','','','','','','','','','','','',''];
 
 let selectedFiles = [];
 let previewURLs = []; // createObjectURL로 생성한 URL 추적 (메모리 해제용)
+let vpURLs = [];     // updateVideoPreview URL 추적
 let albumInited = false;
 let albumData = [];
 let currentClass = null;
@@ -1090,19 +1091,35 @@ function updateVideoPreview() {
   const imgs = selectedFiles.filter(f => f.type.startsWith('image/'));
   const vids = selectedFiles.filter(f => f.type.startsWith('video/'));
 
+  // 이전 blob URL 해제
+  vpURLs.forEach(u => URL.revokeObjectURL(u));
+  vpURLs = [];
+
+  function setVpSlot(slot, file, isVideo, badge) {
+    slot.innerHTML = '';
+    const url = URL.createObjectURL(file);
+    vpURLs.push(url);
+    const el = isVideo ? document.createElement('video') : document.createElement('img');
+    el.src = url;
+    el.className = 'vp-img';
+    if (isVideo) { el.muted = true; el.loop = true; el.autoplay = true; el.playsInline = true; }
+    const span = document.createElement('span');
+    span.className = 'vp-badge';
+    span.textContent = badge;
+    slot.appendChild(el);
+    slot.appendChild(span);
+  }
+
   if (imgs.length >= 1) {
-    const url = URL.createObjectURL(imgs[0]);
-    vpLeft.innerHTML = `<img src="${url}" class="vp-img"><span class="vp-badge">사진 1</span>`;
+    setVpSlot(vpLeft, imgs[0], false, '사진 1');
   } else {
     vpLeft.innerHTML = '<div class="vp-empty"><span>사진 1</span></div>';
   }
 
   if (vids.length >= 1) {
-    const url = URL.createObjectURL(vids[0]);
-    vpRight.innerHTML = `<video src="${url}" class="vp-img" muted autoplay loop playsinline></video><span class="vp-badge">영상</span>`;
+    setVpSlot(vpRight, vids[0], true, '영상');
   } else if (imgs.length >= 2) {
-    const url = URL.createObjectURL(imgs[1]);
-    vpRight.innerHTML = `<img src="${url}" class="vp-img"><span class="vp-badge">사진 2</span>`;
+    setVpSlot(vpRight, imgs[1], false, '사진 2');
   } else {
     vpRight.innerHTML = '<div class="vp-empty"><span>사진 2 또는 영상</span></div>';
   }
@@ -1253,6 +1270,7 @@ function showSuccess(cls, name) {
 
 function resetForm() {
   revokePreviewURLs();
+  vpURLs.forEach(u => URL.revokeObjectURL(u)); vpURLs = [];
   selectedFiles = [];
   document.getElementById('classInput').value = '';
   document.getElementById('classInput').classList.remove('selected');

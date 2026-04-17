@@ -763,6 +763,13 @@ select.float-input.selected{color:var(--charcoal)}
     <!-- 업로드 버튼 -->
     <div style="margin-top:8px">
       <button class="submit-btn" id="submitBtn" onclick="doSubmit()" disabled>업로드 완료하기</button>
+      <div style="text-align:center;margin-top:10px">
+        <button onclick="openReportPopup()"
+          style="background:none;border:none;font-size:.75rem;color:var(--stone-lt);
+          cursor:pointer;text-decoration:underline;padding:4px 8px">
+          문의 / 오류 신고
+        </button>
+      </div>
       <div class="progress-wrap" id="progressWrap">
         <div class="progress-track">
           <div class="progress-fill" id="progressFill"></div>

@@ -1022,7 +1022,7 @@ function showTimeBlockPopup() {
       <button onclick="this.closest('.time-overlay').remove()"
         style="padding:12px 32px;border-radius:100px;border:1.5px solid var(--border);
         background:transparent;color:var(--stone);font-family:'Noto Sans KR',sans-serif;
-        font-size:.84rem;cursor:pointer">확인</button>
+        font-size:.84rem;cursor:pointer">확인하고 계속 업로드</button>
     </div>`;
   document.body.appendChild(el);
 }
@@ -1097,11 +1097,8 @@ function handleFiles(files) {
   const arr = Array.from(files);
   if (arr.length === 0) return;
 
-  // 시간 체크 - 파일 첨부 시 팝업
-  if (isUploadBlocked()) {
-    showTimeBlockPopup();
-    return;
-  }
+  // 시간 체크 - 파일 첨부 시 안내 팝업 (업로드는 가능)
+  if (isUploadBlocked()) showTimeBlockPopup();
 
   // 누적 첨부 (최대 2개)
   for (const f of arr) {
@@ -1221,7 +1218,6 @@ function updateVideoPreview() {
 }
 
 async function doSubmit() {
-  if (isUploadBlocked()) { showTimeBlockPopup(); return; }
   const cls  = document.getElementById('classInput').value.trim();
   const name = document.getElementById('childNameInput').value.trim();
   if (!cls || !name || selectedFiles.length === 0) return;

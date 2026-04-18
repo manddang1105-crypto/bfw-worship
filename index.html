@@ -1841,7 +1841,10 @@ function removeChild(name) {
 // 영상 목록을 Apps Script 서버에서 가져옴 (모든 기기 동기화)
 async function fetchVideoList() {
   try {
-    const res = await fetch(`${SCRIPT_URL}?action=getVideos`);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    const res = await fetch(`${SCRIPT_URL}?action=getVideos`, { signal: controller.signal });
+    clearTimeout(timeout);
     const data = await res.json();
     return data.success ? data.data : [];
   } catch { return []; }
@@ -1931,7 +1934,7 @@ async function adminAddVideo(url) {
   if (titleEl) titleEl.value = '';
 
   alert('영상이 추가됐어요! 잠시 후 목록이 업데이트돼요.');
-  setTimeout(renderAdminVideoList, 2000);
+  setTimeout(renderAdminVideoList, 4000);
 }
 
 async function adminDeleteVideo(videoId) {

@@ -1,4 +1,4 @@
-const CACHE = 'bfw-worship-v11';
+const CACHE = 'bfw-worship-v12';
 const ASSETS = [
   '/bfw-worship/',
   '/bfw-worship/index.html',

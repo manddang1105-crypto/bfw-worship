@@ -1128,21 +1128,25 @@ function renderPreviews() {
     const card = document.createElement('div');
     card.className = 'preview-card';
     const isImg = file.type.startsWith('image/');
-    const url = URL.createObjectURL(file);
-    previewURLs.push(url);
 
     if (isImg) {
+      // 사진: FileReader(data URL) 사용 — blob URL보다 카카오톡/삼성 WebView 호환성 높음
       const img = document.createElement('img');
       img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
-      img.src = url;
-      // KakaoTalk WebView 등 blob URL 지원 안 하는 경우 FileReader로 fallback
-      img.onerror = () => {
-        const r = new FileReader();
-        r.onload = (e) => { img.src = e.target.result; };
-        r.readAsDataURL(file);
+      const r = new FileReader();
+      r.onload = (e) => { img.src = e.target.result; };
+      r.onerror = () => {
+        // FileReader도 실패 시 blob URL 시도
+        const url = URL.createObjectURL(file);
+        previewURLs.push(url);
+        img.src = url;
       };
+      r.readAsDataURL(file);
       card.appendChild(img);
     } else {
+      // 영상: blob URL 사용 (스트리밍 필요) + FileReader fallback
+      const url = URL.createObjectURL(file);
+      previewURLs.push(url);
       const video = document.createElement('video');
       video.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
       video.muted = true; video.loop = true; video.autoplay = true; video.playsInline = true;

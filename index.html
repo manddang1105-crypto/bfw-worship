@@ -833,35 +833,28 @@ select.float-input.selected{color:var(--charcoal)}
         border-radius:100px;padding:2px 8px;border:1px solid var(--border)"></span>
     </div>
     <p style="font-size:.74rem;color:var(--stone-lt);line-height:1.7;margin-bottom:14px">
-      반과 이름을 선택하면 이번 주에 올린 사진·영상을 확인할 수 있어요
+      반을 선택하면 이번 주에 올린 사진·영상을 확인할 수 있어요
     </p>
-    <div style="display:flex;gap:8px;margin-bottom:10px">
-      <select id="myCheckClass" style="flex:1;padding:10px 12px;border:1.5px solid var(--border);
-        border-radius:var(--radius-sm);font-family:inherit;font-size:.82rem;
-        background:var(--ivory);color:var(--charcoal);outline:none"
-        onfocus="this.style.borderColor='var(--sage)'" onblur="this.style.borderColor='var(--border)'">
-        <option value="">반 선택</option>
-        <option value="선경나라">선경나라</option>
-        <option value="세희나라">세희나라</option>
-        <option value="아라나라">아라나라</option>
-        <option value="애경나라">애경나라</option>
-        <option value="연옥나라">연옥나라</option>
-        <option value="영실나라">영실나라</option>
-        <option value="재신나라">재신나라</option>
-        <option value="정일나라">정일나라</option>
-        <option value="주영나라">주영나라</option>
-        <option value="진영나라">진영나라</option>
-        <option value="현진나라">현진나라</option>
-        <option value="혜정나라">혜정나라</option>
-        <option value="혜진나라">혜진나라</option>
-      </select>
-      <input id="myCheckName" type="text" placeholder="어린이 이름"
-        style="flex:1;padding:10px 12px;border:1.5px solid var(--border);
-        border-radius:var(--radius-sm);font-family:inherit;font-size:.82rem;
-        background:var(--ivory);color:var(--charcoal);outline:none"
-        onfocus="this.style.borderColor='var(--sage)'" onblur="this.style.borderColor='var(--border)'"
-        onkeydown="if(event.key==='Enter')checkMyUpload()">
-    </div>
+    <select id="myCheckClass" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);
+      border-radius:var(--radius-sm);font-family:inherit;font-size:.82rem;
+      background:var(--ivory);color:var(--charcoal);outline:none;margin-bottom:10px"
+      onfocus="this.style.borderColor='var(--sage)'" onblur="this.style.borderColor='var(--border)'"
+      onchange="checkMyUpload()">
+      <option value="">반 선택</option>
+      <option value="선경나라">선경나라</option>
+      <option value="세희나라">세희나라</option>
+      <option value="아라나라">아라나라</option>
+      <option value="애경나라">애경나라</option>
+      <option value="연옥나라">연옥나라</option>
+      <option value="영실나라">영실나라</option>
+      <option value="재신나라">재신나라</option>
+      <option value="정일나라">정일나라</option>
+      <option value="주영나라">주영나라</option>
+      <option value="진영나라">진영나라</option>
+      <option value="현진나라">현진나라</option>
+      <option value="혜정나라">혜정나라</option>
+      <option value="혜진나라">혜진나라</option>
+    </select>
     <button onclick="checkMyUpload()"
       style="width:100%;padding:11px;border-radius:var(--radius-sm);border:none;
       background:linear-gradient(135deg,var(--sage-lt),var(--sage-dk));color:white;
@@ -1041,11 +1034,9 @@ function switchTab(name) {
     // 주차 배지 업데이트
     const badge = document.getElementById('myCheckWeekBadge');
     if (badge) badge.textContent = formatWeekLabel(getCurrentWeekLabel());
-    // 업로드 폼에서 선택한 반/이름 자동 채우기
+    // 업로드 폼에서 선택한 반 자동 채우기
     const cls = document.getElementById('classInput')?.value;
-    const nm  = document.getElementById('childNameInput')?.value.trim();
-    if (cls)  document.getElementById('myCheckClass').value = cls;
-    if (nm)   document.getElementById('myCheckName').value  = nm;
+    if (cls) document.getElementById('myCheckClass').value = cls;
   }
   // 관리자 탭 진입시 비밀번호 초기화
   if (name === 'admin' && !adminLoggedIn) {
@@ -2044,11 +2035,10 @@ let myCheckCache = null; // { ts, data }
 
 async function checkMyUpload() {
   const cls  = document.getElementById('myCheckClass').value.trim();
-  const name = document.getElementById('myCheckName').value.trim();
   const result = document.getElementById('myCheckResult');
 
   if (!cls) {
-    result.innerHTML = `<p style="font-size:.78rem;color:var(--error);text-align:center">반을 선택해 주세요</p>`;
+    result.innerHTML = '';
     return;
   }
 
@@ -2067,15 +2057,10 @@ async function checkMyUpload() {
     }
 
     const all = myCheckCache.data;
-    // 이름 입력 시 해당 어린이만, 없으면 반 전체
-    const matched = all.filter(d =>
-      d.class === cls &&
-      d.week === weekLabel &&
-      (!name || d.child.replace(/-\d+$/, '') === name)
-    );
+    const matched = all.filter(d => d.class === cls && d.week === weekLabel);
 
     if (matched.length === 0) {
-      const scope = name ? `${cls} · ${name}` : cls;
+      const scope = cls;
       result.innerHTML = `
         <div style="text-align:center;padding:16px 8px">
           <div style="font-size:1.8rem;margin-bottom:8px">📭</div>
@@ -2109,9 +2094,7 @@ async function checkMyUpload() {
         display:flex;align-items:center;gap:10px">
         <span style="font-size:1.2rem">✅</span>
         <div>
-          <p style="font-size:.8rem;font-weight:500;color:var(--success)">
-            ${name ? '업로드 완료' : `${children.length}명 업로드`}
-          </p>
+          <p style="font-size:.8rem;font-weight:500;color:var(--success)">${children.length}명 업로드</p>
           <p style="font-size:.7rem;color:var(--stone-lt);margin-top:2px">
             ${formatWeekLabel(weekLabel)} · ${scope} · 사진 ${totalImgs}장${totalVids ? ' · 영상 ' + totalVids + '개' : ''}
           </p>

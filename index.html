@@ -1240,6 +1240,9 @@ async function doSubmit() {
   };
 
   try {
+    const MB = 1024 * 1024;
+    const UPLOAD_LIMIT = 35 * MB; // base64 변환 후 서버 한계 고려
+
     // ① 파일 순차 압축 (병렬로 하면 모바일에서 메모리 부족으로 멈출 수 있음)
     const processedFiles = [];
     for (let i = 0; i < selectedFiles.length; i++) {
@@ -1249,37 +1252,60 @@ async function doSubmit() {
       let ext = file.name.split('.').pop().toLowerCase();
       let mimeType = isVid ? file.type : 'image/jpeg';
 
-      if (isVid) {
-        textEl.textContent = total > 1 ? `영상 최적화 중... (${i+1}/${total})` : '영상 최적화 중...';
-        uploadFile = await compressVideo(file, textEl);
-        ext = uploadFile.type && uploadFile.type.includes('mp4') ? 'mp4' :
-              uploadFile.type && uploadFile.type.includes('webm') ? 'webm' :
-              file.name.split('.').pop().toLowerCase();
-        mimeType = uploadFile.type || file.type;
-      } else {
-        textEl.textContent = total > 1 ? `사진 압축 중... (${i+1}/${total})` : '사진 압축 중...';
-        uploadFile = await compressImage(file); ext = 'jpg';
+      try {
+        if (isVid) {
+          textEl.textContent = total > 1 ? `영상 최적화 중... (${i+1}/${total})` : '영상 최적화 중...';
+          uploadFile = await compressVideo(file, textEl);
+          ext = uploadFile.type && uploadFile.type.includes('mp4') ? 'mp4' :
+                uploadFile.type && uploadFile.type.includes('webm') ? 'webm' :
+                file.name.split('.').pop().toLowerCase();
+          mimeType = uploadFile.type || file.type;
+        } else {
+          textEl.textContent = total > 1 ? `사진 압축 중... (${i+1}/${total})` : '사진 압축 중...';
+          uploadFile = await compressImage(file); ext = 'jpg';
+        }
+      } catch(compErr) {
+        // 압축 실패 → 원본으로 진행하되 자동 보고
+        const extra = `원본크기: ${(file.size/MB).toFixed(1)}MB, 타입: ${file.type}`;
+        reportError(`압축 실패: ${compErr.message}`, cls, name, `압축 단계 (${i+1}번째 파일)`, extra);
+        uploadFile = file;
+        mimeType = file.type;
       }
+
+      // 압축 후 크기 체크
+      if (uploadFile.size > UPLOAD_LIMIT) {
+        const extra = `원본: ${(file.size/MB).toFixed(1)}MB → 압축후: ${(uploadFile.size/MB).toFixed(1)}MB`;
+        reportError(`파일 크기 초과 (${(uploadFile.size/MB).toFixed(1)}MB)`, cls, name, '크기 체크', extra);
+        throw new Error(`파일이 너무 커요 (${(uploadFile.size/MB).toFixed(0)}MB). 영상을 짧게 줄여주세요.`);
+      }
+
       progresses[i] = 20; updateProgress();
       const fname = i === 0 ? `${cls} ${name}.${ext}` : `${cls} ${name}-${i+1}.${ext}`;
-      processedFiles.push({ uploadFile, fname, mimeType });
+      processedFiles.push({ uploadFile, fname, mimeType, origSize: file.size });
     }
 
     // ② 파일 순차 base64 변환 + 업로드 (Samsung WebView에서 FileReader 동시 실행 시 충돌 방지)
     for (let i = 0; i < processedFiles.length; i++) {
-      const { uploadFile, fname, mimeType } = processedFiles[i];
+      const { uploadFile, fname, mimeType, origSize } = processedFiles[i];
       const isVid = mimeType.startsWith('video/');
       textEl.textContent = total > 1 ? `파일 전송 중... (${i+1}/${total})` : '파일 전송 중...';
 
       // base64 변환 (arrayBuffer 사용 - FileReader 동시 실행 충돌 없음)
-      const arrayBuffer = await uploadFile.arrayBuffer();
-      const bytes = new Uint8Array(arrayBuffer);
-      let binary = '';
-      const chunkSize = 8192;
-      for (let j = 0; j < bytes.length; j += chunkSize) {
-        binary += String.fromCharCode(...bytes.subarray(j, j + chunkSize));
+      let b64;
+      try {
+        const arrayBuffer = await uploadFile.arrayBuffer();
+        const bytes = new Uint8Array(arrayBuffer);
+        let binary = '';
+        const chunkSize = 8192;
+        for (let j = 0; j < bytes.length; j += chunkSize) {
+          binary += String.fromCharCode(...bytes.subarray(j, j + chunkSize));
+        }
+        b64 = btoa(binary);
+      } catch(b64Err) {
+        const extra = `파일크기: ${(uploadFile.size/MB).toFixed(1)}MB, 타입: ${mimeType}`;
+        reportError(`base64 변환 실패: ${b64Err.message}`, cls, name, `base64 단계 (${i+1}번째)`, extra);
+        throw b64Err;
       }
-      const b64 = btoa(binary);
       progresses[i] = 60; updateProgress();
 
       // 전송 타임아웃: 영상은 120초, 사진은 60초
@@ -1295,6 +1321,14 @@ async function doSubmit() {
             files: [{ name: fname, mimeType, base64: b64 }] }),
           signal: controller.signal
         });
+      } catch(fetchErr) {
+        const isTimeout = fetchErr.name === 'AbortError';
+        const extra = `파일크기: ${(uploadFile.size/MB).toFixed(1)}MB, 원본: ${(origSize/MB).toFixed(1)}MB, 타입: ${mimeType}, 타임아웃: ${timeoutMs/1000}s`;
+        reportError(
+          isTimeout ? `전송 타임아웃 (${timeoutMs/1000}초)` : `전송 실패: ${fetchErr.message}`,
+          cls, name, `전송 단계 (${i+1}번째)`, extra
+        );
+        throw fetchErr;
       } finally {
         clearTimeout(fetchTimeout);
       }
@@ -1310,8 +1344,8 @@ async function doSubmit() {
     fillEl.style.background = '#E87070';
     textEl.textContent = '오류: ' + err.message;
     btn.disabled = false;
-    // 오류 자동 보고
-    reportError(err.message, cls, name, textEl.textContent);
+    // 최종 오류도 보고 (단계별에서 이미 보고된 경우 중복되지만 누락 방지)
+    reportError(err.message, cls, name, '최종 catch');
     setTimeout(() => {
       wrapEl.style.display = 'none';
       fillEl.style.background = '';
@@ -1370,8 +1404,10 @@ async function submitReport() {
   setTimeout(closeReportPopup, 2000);
 }
 
-function reportError(message, cls, name, step) {
+function reportError(message, cls, name, step, extra) {
   try {
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    const connInfo = conn ? `${conn.effectiveType || ''} ${conn.downlink ? conn.downlink+'Mbps' : ''}`.trim() : '알수없음';
     fetch(SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
@@ -1382,7 +1418,9 @@ function reportError(message, cls, name, step) {
         className: cls || '',
         childName: name || '',
         step: step || '',
-        userAgent: navigator.userAgent
+        userAgent: navigator.userAgent,
+        connection: connInfo,
+        extra: extra || ''
       })
     });
   } catch(e) {}

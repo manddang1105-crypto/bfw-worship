@@ -813,13 +813,67 @@ select.float-input.selected{color:var(--charcoal)}
 
 <!-- ====== 앨범 ====== -->
 <div class="page" id="page-album">
-  <header class="site-header" style="padding:28px 0 20px">
+  <header class="site-header" style="padding:28px 0 16px">
     <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;
-      color:var(--charcoal);text-align:center;margin-bottom:4px">가정예배 영상</h2>
+      color:var(--charcoal);text-align:center;margin-bottom:4px">앨범 보기</h2>
     <p style="font-size:.76rem;color:var(--stone-lt);text-align:center;letter-spacing:.1em">
-      영상을 클릭하면 유튜브로 연결돼요
+      이번 주 업로드 확인 · 가정예배 영상
     </p>
   </header>
+
+  <!-- 이번 주 업로드 확인 -->
+  <div class="card" style="margin-bottom:16px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--sage);flex-shrink:0"></div>
+      <span style="font-size:.82rem;font-weight:500;color:var(--charcoal);letter-spacing:.04em">이번 주 업로드 확인</span>
+      <span id="myCheckWeekBadge" style="font-size:.68rem;color:var(--stone-lt);background:var(--cream);
+        border-radius:100px;padding:2px 8px;border:1px solid var(--border)"></span>
+    </div>
+    <p style="font-size:.74rem;color:var(--stone-lt);line-height:1.7;margin-bottom:14px">
+      반과 이름을 선택하면 이번 주에 올린 사진·영상을 확인할 수 있어요
+    </p>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <select id="myCheckClass" style="flex:1;padding:10px 12px;border:1.5px solid var(--border);
+        border-radius:var(--radius-sm);font-family:inherit;font-size:.82rem;
+        background:var(--ivory);color:var(--charcoal);outline:none"
+        onfocus="this.style.borderColor='var(--sage)'" onblur="this.style.borderColor='var(--border)'">
+        <option value="">반 선택</option>
+        <option value="선경나라">선경나라</option>
+        <option value="세희나라">세희나라</option>
+        <option value="아라나라">아라나라</option>
+        <option value="애경나라">애경나라</option>
+        <option value="연옥나라">연옥나라</option>
+        <option value="영실나라">영실나라</option>
+        <option value="재신나라">재신나라</option>
+        <option value="정일나라">정일나라</option>
+        <option value="주영나라">주영나라</option>
+        <option value="진영나라">진영나라</option>
+        <option value="현진나라">현진나라</option>
+        <option value="혜정나라">혜정나라</option>
+        <option value="혜진나라">혜진나라</option>
+      </select>
+      <input id="myCheckName" type="text" placeholder="어린이 이름"
+        style="flex:1;padding:10px 12px;border:1.5px solid var(--border);
+        border-radius:var(--radius-sm);font-family:inherit;font-size:.82rem;
+        background:var(--ivory);color:var(--charcoal);outline:none"
+        onfocus="this.style.borderColor='var(--sage)'" onblur="this.style.borderColor='var(--border)'"
+        onkeydown="if(event.key==='Enter')checkMyUpload()">
+    </div>
+    <button onclick="checkMyUpload()"
+      style="width:100%;padding:11px;border-radius:var(--radius-sm);border:none;
+      background:linear-gradient(135deg,var(--sage-lt),var(--sage-dk));color:white;
+      font-family:inherit;font-size:.85rem;font-weight:500;cursor:pointer;letter-spacing:.04em">
+      확인하기
+    </button>
+    <div id="myCheckResult" style="margin-top:14px"></div>
+  </div>
+
+  <!-- 구분선 -->
+  <div style="display:flex;align-items:center;gap:12px;margin:20px 0 16px">
+    <div style="flex:1;height:1px;background:var(--border)"></div>
+    <span style="font-size:.72rem;color:var(--stone-lt);letter-spacing:.1em;font-family:'Cormorant Garamond',serif">가정예배 영상</span>
+    <div style="flex:1;height:1px;background:var(--border)"></div>
+  </div>
 
   <!-- 영상 목록 -->
   <div id="videoList"></div>
@@ -979,7 +1033,17 @@ function switchTab(name) {
     b.classList.toggle('active', ['upload','album','admin'][i] === name));
   document.querySelectorAll('.page').forEach(p =>
     p.classList.toggle('active', p.id === 'page-'+name));
-  if (name === 'album') renderVideoList();
+  if (name === 'album') {
+    renderVideoList();
+    // 주차 배지 업데이트
+    const badge = document.getElementById('myCheckWeekBadge');
+    if (badge) badge.textContent = getCurrentWeekLabel().replace('_주','주');
+    // 업로드 폼에서 선택한 반/이름 자동 채우기
+    const cls = document.getElementById('classInput')?.value;
+    const nm  = document.getElementById('childNameInput')?.value.trim();
+    if (cls)  document.getElementById('myCheckClass').value = cls;
+    if (nm)   document.getElementById('myCheckName').value  = nm;
+  }
   // 관리자 탭 진입시 비밀번호 초기화
   if (name === 'admin' && !adminLoggedIn) {
     document.getElementById('adminLoginSection').style.display = 'block';
@@ -1836,6 +1900,115 @@ function removeChild(name) {
   renderChildChips();
 }
 
+
+// ── 이번 주 라벨 계산 (KST 기준, Apps Script와 동일 로직) ──
+function getCurrentWeekLabel() {
+  const kst = new Date(Date.now() + 9 * 3600 * 1000);
+  const dow = kst.getUTCDay(); // 0=일
+  const sunday = new Date(kst);
+  sunday.setUTCDate(kst.getUTCDate() - dow);
+  const month = sunday.getUTCMonth() + 1;
+  const day = sunday.getUTCDate();
+  const weekNum = Math.ceil(day / 7);
+  return `${month}월_${weekNum}주`;
+}
+
+// ── 내 업로드 확인 ──
+let myCheckCache = null; // { ts, data }
+
+async function checkMyUpload() {
+  const cls = document.getElementById('myCheckClass').value.trim();
+  const name = document.getElementById('myCheckName').value.trim();
+  const result = document.getElementById('myCheckResult');
+
+  if (!cls || !name) {
+    result.innerHTML = `<p style="font-size:.78rem;color:var(--error);text-align:center">반과 이름을 모두 입력해 주세요</p>`;
+    return;
+  }
+
+  const weekLabel = getCurrentWeekLabel();
+  result.innerHTML = `<p style="font-size:.78rem;color:var(--stone-lt);text-align:center;padding:8px 0">확인 중...</p>`;
+
+  try {
+    // 1분 캐시
+    if (!myCheckCache || Date.now() - myCheckCache.ts > 60000) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
+      const res = await fetch(`${SCRIPT_URL}?action=list`, { signal: controller.signal });
+      clearTimeout(timeout);
+      const data = await res.json();
+      myCheckCache = { ts: Date.now(), data: data.success ? data.data : [] };
+    }
+
+    const all = myCheckCache.data;
+    // 이름 앞뒤 공백 제거 후 비교, 번호 suffix 제거(-1, -2)된 실제 이름과 비교
+    const matched = all.filter(d =>
+      d.class === cls &&
+      d.child.replace(/-\d+$/, '') === name &&
+      d.week === weekLabel
+    );
+
+    if (matched.length === 0) {
+      result.innerHTML = `
+        <div style="text-align:center;padding:16px 8px">
+          <div style="font-size:1.8rem;margin-bottom:8px">📭</div>
+          <p style="font-size:.8rem;color:var(--stone);font-weight:500;margin-bottom:4px">
+            아직 업로드하지 않았어요
+          </p>
+          <p style="font-size:.72rem;color:var(--stone-lt);line-height:1.6">
+            ${weekLabel.replace('_주', '주')} · ${cls} · ${name}
+          </p>
+        </div>`;
+      return;
+    }
+
+    const allFiles = matched.flatMap(d => d.files);
+    const imgFiles = allFiles.filter(f => f.mimeType && f.mimeType.startsWith('image/'));
+    const vidFiles = allFiles.filter(f => f.mimeType && !f.mimeType.startsWith('image/'));
+
+    let html = `
+      <div style="background:rgba(90,158,122,.06);border:1px solid rgba(90,158,122,.25);
+        border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:12px;
+        display:flex;align-items:center;gap:10px">
+        <span style="font-size:1.2rem">✅</span>
+        <div>
+          <p style="font-size:.8rem;font-weight:500;color:var(--success)">업로드 완료</p>
+          <p style="font-size:.7rem;color:var(--stone-lt);margin-top:2px">
+            ${weekLabel.replace('_주', '주')} · 사진 ${imgFiles.length}장${vidFiles.length ? ' · 영상 ' + vidFiles.length + '개' : ''}
+          </p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(${Math.min(allFiles.length, 3)},1fr);gap:6px">`;
+
+    allFiles.slice(0, 6).forEach(f => {
+      const isImg = f.mimeType && f.mimeType.startsWith('image/');
+      html += `<div style="aspect-ratio:1;border-radius:8px;overflow:hidden;background:var(--cream);
+        position:relative;cursor:pointer" onclick="openLightbox('${f.id}','${f.mimeType}','${name}','${weekLabel}')">
+        ${isImg
+          ? `<img src="https://drive.google.com/thumbnail?id=${f.id}&sz=w300"
+              style="width:100%;height:100%;object-fit:cover"
+              onerror="this.style.display='none';this.parentNode.querySelector('.vid-badge').style.display='flex'">`
+          : ''}
+        <div class="vid-badge" style="display:${isImg ? 'none' : 'flex'};
+          position:absolute;inset:0;align-items:center;justify-content:center;
+          flex-direction:column;gap:4px;background:#111">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="#aaa"><path d="M8 5v14l11-7z"/></svg>
+          <span style="font-size:.62rem;color:#aaa">영상</span>
+        </div>
+      </div>`;
+    });
+
+    html += '</div>';
+    if (allFiles.length > 6) {
+      html += `<p style="font-size:.7rem;color:var(--stone-lt);text-align:center;margin-top:8px">외 ${allFiles.length - 6}개</p>`;
+    }
+
+    result.innerHTML = html;
+
+  } catch(e) {
+    result.innerHTML = `<p style="font-size:.78rem;color:var(--error);text-align:center">불러오기 실패 · 잠시 후 다시 시도해 주세요</p>`;
+  }
+}
 
 // ── 영상 보기 (유튜브 링크 관리) ──
 // 영상 목록을 Apps Script 서버에서 가져옴 (모든 기기 동기화)

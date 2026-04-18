@@ -1040,7 +1040,7 @@ function switchTab(name) {
     renderVideoList();
     // 주차 배지 업데이트
     const badge = document.getElementById('myCheckWeekBadge');
-    if (badge) badge.textContent = getCurrentWeekLabel().replace('_주','주');
+    if (badge) badge.textContent = formatWeekLabel(getCurrentWeekLabel());
     // 업로드 폼에서 선택한 반/이름 자동 채우기
     const cls = document.getElementById('classInput')?.value;
     const nm  = document.getElementById('childNameInput')?.value.trim();
@@ -2021,14 +2021,22 @@ function removeChild(name) {
 
 // ── 이번 주 라벨 계산 (KST 기준, Apps Script와 동일 로직) ──
 function getCurrentWeekLabel() {
+  // 서버(Apps Script) 저장 형식: "2026-04-12_주" (해당 주 일요일 날짜)
   const kst = new Date(Date.now() + 9 * 3600 * 1000);
   const dow = kst.getUTCDay(); // 0=일
   const sunday = new Date(kst);
   sunday.setUTCDate(kst.getUTCDate() - dow);
-  const month = sunday.getUTCMonth() + 1;
-  const day = sunday.getUTCDate();
-  const weekNum = Math.ceil(day / 7);
-  return `${month}월_${weekNum}주`;
+  const y = sunday.getUTCFullYear();
+  const m = String(sunday.getUTCMonth() + 1).padStart(2, '0');
+  const d = String(sunday.getUTCDate()).padStart(2, '0');
+  return `${y}-${m}-${d}_주`;
+}
+
+function formatWeekLabel(label) {
+  // "2026-04-12_주" → "4/12 주" 로 표시
+  const match = label.match(/\d{4}-(\d{2})-(\d{2})_주/);
+  if (match) return `${parseInt(match[1])}/${parseInt(match[2])} 주`;
+  return label.replace('_주', '주');
 }
 
 // ── 내 업로드 확인 ──
@@ -2075,7 +2083,7 @@ async function checkMyUpload() {
             아직 업로드하지 않았어요
           </p>
           <p style="font-size:.72rem;color:var(--stone-lt);line-height:1.6">
-            ${weekLabel.replace('_주', '주')} · ${scope}
+            ${formatWeekLabel(weekLabel)} · ${scope}
           </p>
         </div>`;
       return;
@@ -2105,7 +2113,7 @@ async function checkMyUpload() {
             ${name ? '업로드 완료' : `${children.length}명 업로드`}
           </p>
           <p style="font-size:.7rem;color:var(--stone-lt);margin-top:2px">
-            ${weekLabel.replace('_주', '주')} · ${scope} · 사진 ${totalImgs}장${totalVids ? ' · 영상 ' + totalVids + '개' : ''}
+            ${formatWeekLabel(weekLabel)} · ${scope} · 사진 ${totalImgs}장${totalVids ? ' · 영상 ' + totalVids + '개' : ''}
           </p>
         </div>
       </div>`;

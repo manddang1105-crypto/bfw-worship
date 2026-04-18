@@ -1157,7 +1157,8 @@ function renderPreviews() {
 
     const tag = document.createElement('div');
     tag.className = 'preview-tag';
-    tag.textContent = isImg ? '사진' : '영상';
+    const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+    tag.textContent = (isImg ? '사진' : '영상') + ' · ' + sizeMB + 'MB';
     card.appendChild(tag);
 
     const rm = document.createElement('button');
@@ -1245,19 +1246,31 @@ async function doSubmit() {
     const processedFiles = [];
     for (let i = 0; i < selectedFiles.length; i++) {
       const file = selectedFiles[i];
-      textEl.textContent = total > 1 ? `사진 압축 중... (${i+1}/${total})` : '사진 압축 중...';
       const isVid = file.type.startsWith('video/');
       let uploadFile = file;
       let ext = file.name.split('.').pop().toLowerCase();
-      if (!isVid) { uploadFile = await compressImage(file); ext = 'jpg'; }
+      let mimeType = isVid ? file.type : 'image/jpeg';
+
+      if (isVid) {
+        textEl.textContent = total > 1 ? `영상 최적화 중... (${i+1}/${total})` : '영상 최적화 중...';
+        uploadFile = await compressVideo(file, textEl);
+        ext = uploadFile.type && uploadFile.type.includes('mp4') ? 'mp4' :
+              uploadFile.type && uploadFile.type.includes('webm') ? 'webm' :
+              file.name.split('.').pop().toLowerCase();
+        mimeType = uploadFile.type || file.type;
+      } else {
+        textEl.textContent = total > 1 ? `사진 압축 중... (${i+1}/${total})` : '사진 압축 중...';
+        uploadFile = await compressImage(file); ext = 'jpg';
+      }
       progresses[i] = 20; updateProgress();
       const fname = i === 0 ? `${cls} ${name}.${ext}` : `${cls} ${name}-${i+1}.${ext}`;
-      processedFiles.push({ uploadFile, fname, mimeType: isVid ? file.type : 'image/jpeg' });
+      processedFiles.push({ uploadFile, fname, mimeType });
     }
 
     // ② 파일 순차 base64 변환 + 업로드 (Samsung WebView에서 FileReader 동시 실행 시 충돌 방지)
     for (let i = 0; i < processedFiles.length; i++) {
       const { uploadFile, fname, mimeType } = processedFiles[i];
+      const isVid = mimeType.startsWith('video/');
       textEl.textContent = total > 1 ? `파일 전송 중... (${i+1}/${total})` : '파일 전송 중...';
 
       // base64 변환 (arrayBuffer 사용 - FileReader 동시 실행 충돌 없음)
@@ -1271,21 +1284,22 @@ async function doSubmit() {
       const b64 = btoa(binary);
       progresses[i] = 60; updateProgress();
 
-        // 전송 (60초 타임아웃)
-        const controller = new AbortController();
-        const fetchTimeout = setTimeout(() => controller.abort(), 60000);
-        try {
-          await fetch(SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ className: cls, childName: name,
-              files: [{ name: fname, mimeType, base64: b64 }] }),
-            signal: controller.signal
-          });
-        } finally {
-          clearTimeout(fetchTimeout);
-        }
+      // 전송 타임아웃: 영상은 120초, 사진은 60초
+      const timeoutMs = isVid ? 120000 : 60000;
+      const controller = new AbortController();
+      const fetchTimeout = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ className: cls, childName: name,
+            files: [{ name: fname, mimeType, base64: b64 }] }),
+          signal: controller.signal
+        });
+      } finally {
+        clearTimeout(fetchTimeout);
+      }
       progresses[i] = 100; updateProgress();
     }
 
@@ -1377,8 +1391,17 @@ function reportError(message, cls, name, step) {
 }
 
 // 이미지 압축 함수 - createImageBitmap으로 빠른 디코딩 + 1280px/0.75q로 크기 최소화
-async function compressImage(file, maxWidth=1280, quality=0.75) {
+async function compressImage(file) {
   if (!file.type.startsWith('image/')) return file;
+
+  // 파일 크기에 따라 압축 강도 자동 조절
+  const MB = 1024 * 1024;
+  const sz = file.size;
+  let maxWidth, quality;
+  if (sz < 3 * MB)       { maxWidth = 1440; quality = 0.82; } // 3MB 미만: 고화질 유지
+  else if (sz < 8 * MB)  { maxWidth = 1280; quality = 0.75; } // 3~8MB: 기본 압축
+  else if (sz < 20 * MB) { maxWidth = 1080; quality = 0.68; } // 8~20MB: 강한 압축
+  else                   { maxWidth = 960;  quality = 0.60; } // 20MB+: 최대 압축
 
   const drawAndBlob = (source) => new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas');
@@ -1387,7 +1410,7 @@ async function compressImage(file, maxWidth=1280, quality=0.75) {
     if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
     canvas.width = w; canvas.height = h;
     canvas.getContext('2d').drawImage(source, 0, 0, w, h);
-    if (source.close) source.close(); // ImageBitmap 메모리 해제
+    if (source.close) source.close();
     const timeout = setTimeout(() => reject(new Error('toBlob timeout')), 15000);
     canvas.toBlob((blob) => {
       clearTimeout(timeout);
@@ -1396,15 +1419,13 @@ async function compressImage(file, maxWidth=1280, quality=0.75) {
     }, 'image/jpeg', quality);
   });
 
-  // createImageBitmap: FileReader+Image 방식보다 훨씬 빠름 (브라우저 네이티브 디코딩)
   if (typeof createImageBitmap !== 'undefined') {
     try {
       const bitmap = await createImageBitmap(file);
       return await drawAndBlob(bitmap);
-    } catch { /* 지원 안 하거나 실패 시 fallback */ }
+    } catch { /* fallback */ }
   }
 
-  // Fallback: 구형 브라우저용
   try {
     return await new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -1418,9 +1439,103 @@ async function compressImage(file, maxWidth=1280, quality=0.75) {
       reader.readAsDataURL(file);
     });
   } catch {
-    // 압축 실패 시 원본 반환
     return file;
   }
+}
+
+// ── 영상 압축 ──
+// Apps Script POST 한계 ≈ 50MB → base64 오버헤드 감안 시 원본 35MB 이하 필요
+async function compressVideo(file, textEl) {
+  const MB = 1024 * 1024;
+  const SAFE_LIMIT = 35 * MB;   // 이 이하면 그대로 전송
+  const HARD_LIMIT = 200 * MB;  // 이 이상이면 무조건 거부
+
+  if (file.size <= SAFE_LIMIT) return file;
+
+  if (file.size > HARD_LIMIT) {
+    throw new Error(`영상이 너무 커요 (${(file.size/MB).toFixed(0)}MB). 짧게 잘라서 다시 올려주세요.`);
+  }
+
+  // Android/Chrome: captureStream으로 재인코딩 시도
+  const testEl = document.createElement('video');
+  const hasCaptureStream = typeof testEl.captureStream === 'function' ||
+                           typeof testEl.mozCaptureStream === 'function';
+
+  if (hasCaptureStream) {
+    return new Promise((resolve) => {
+      const videoEl = document.createElement('video');
+      const objUrl = URL.createObjectURL(file);
+      videoEl.src = objUrl;
+      videoEl.muted = true;
+      videoEl.playsInline = true;
+
+      const cleanup = () => { try { URL.revokeObjectURL(objUrl); } catch {} };
+
+      videoEl.onerror = () => { cleanup(); resolve(file); };
+
+      videoEl.onloadedmetadata = () => {
+        const duration = videoEl.duration || 60;
+        try {
+          const captureFn = videoEl.captureStream || videoEl.mozCaptureStream;
+          const stream = captureFn.call(videoEl, 25);
+
+          // 지원 코덱 탐색
+          const mimeTypes = [
+            'video/mp4;codecs=avc1',
+            'video/webm;codecs=vp8,opus',
+            'video/webm;codecs=vp8',
+            'video/webm'
+          ];
+          const mimeType = mimeTypes.find(m => MediaRecorder.isTypeSupported(m)) || '';
+          if (!mimeType) { cleanup(); resolve(file); return; }
+
+          // 목표 비트레이트: 35MB 이하가 되도록 역산 (여유 있게 x0.85)
+          const targetBytes = SAFE_LIMIT * 0.85;
+          const bitsPerSec = Math.min(Math.floor((targetBytes * 8) / duration), 2000000);
+
+          const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: bitsPerSec });
+          const chunks = [];
+
+          recorder.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+          recorder.onstop = () => {
+            cleanup();
+            const blob = new Blob(chunks, { type: mimeType });
+            const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
+            const compressed = new File([blob], file.name.replace(/\.\w+$/, '.' + ext), { type: mimeType });
+            // 압축 결과가 더 크면 원본 반환 (단, 원본이 한계 초과면 오류)
+            if (compressed.size > file.size) {
+              file.size > SAFE_LIMIT ? resolve(file) : resolve(file);
+            } else {
+              resolve(compressed);
+            }
+          };
+          recorder.onerror = () => { cleanup(); resolve(file); };
+
+          if (textEl) textEl.textContent = `영상 압축 중... (약 ${Math.ceil(duration)}초 소요)`;
+
+          videoEl.currentTime = 0;
+          videoEl.play().catch(() => {});
+          recorder.start(200);
+
+          videoEl.onended = () => {
+            if (recorder.state === 'recording') recorder.stop();
+            videoEl.pause();
+          };
+          // 안전 타임아웃 (duration + 5초)
+          setTimeout(() => {
+            if (recorder.state === 'recording') { recorder.stop(); videoEl.pause(); }
+          }, (duration + 5) * 1000);
+
+        } catch { cleanup(); resolve(file); }
+      };
+    });
+  }
+
+  // iOS/Safari: captureStream 없음 → 크기만 체크
+  if (file.size > SAFE_LIMIT) {
+    throw new Error(`영상이 너무 커요 (${(file.size/MB).toFixed(0)}MB). 30초 이하 영상으로 줄여서 올려주세요.`);
+  }
+  return file;
 }
 
 

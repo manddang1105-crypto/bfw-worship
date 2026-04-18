@@ -2032,12 +2032,12 @@ function getCurrentWeekLabel() {
 let myCheckCache = null; // { ts, data }
 
 async function checkMyUpload() {
-  const cls = document.getElementById('myCheckClass').value.trim();
+  const cls  = document.getElementById('myCheckClass').value.trim();
   const name = document.getElementById('myCheckName').value.trim();
   const result = document.getElementById('myCheckResult');
 
-  if (!cls || !name) {
-    result.innerHTML = `<p style="font-size:.78rem;color:var(--error);text-align:center">반과 이름을 모두 입력해 주세요</p>`;
+  if (!cls) {
+    result.innerHTML = `<p style="font-size:.78rem;color:var(--error);text-align:center">반을 선택해 주세요</p>`;
     return;
   }
 
@@ -2056,14 +2056,15 @@ async function checkMyUpload() {
     }
 
     const all = myCheckCache.data;
-    // 이름 앞뒤 공백 제거 후 비교, 번호 suffix 제거(-1, -2)된 실제 이름과 비교
+    // 이름 입력 시 해당 어린이만, 없으면 반 전체
     const matched = all.filter(d =>
       d.class === cls &&
-      d.child.replace(/-\d+$/, '') === name &&
-      d.week === weekLabel
+      d.week === weekLabel &&
+      (!name || d.child.replace(/-\d+$/, '') === name)
     );
 
     if (matched.length === 0) {
+      const scope = name ? `${cls} · ${name}` : cls;
       result.innerHTML = `
         <div style="text-align:center;padding:16px 8px">
           <div style="font-size:1.8rem;margin-bottom:8px">📭</div>
@@ -2071,15 +2072,25 @@ async function checkMyUpload() {
             아직 업로드하지 않았어요
           </p>
           <p style="font-size:.72rem;color:var(--stone-lt);line-height:1.6">
-            ${weekLabel.replace('_주', '주')} · ${cls} · ${name}
+            ${weekLabel.replace('_주', '주')} · ${scope}
           </p>
         </div>`;
       return;
     }
 
-    const allFiles = matched.flatMap(d => d.files);
-    const imgFiles = allFiles.filter(f => f.mimeType && f.mimeType.startsWith('image/'));
-    const vidFiles = allFiles.filter(f => f.mimeType && !f.mimeType.startsWith('image/'));
+    // 어린이별로 그룹핑하여 표시
+    const byChild = {};
+    matched.forEach(d => {
+      const childName = d.child.replace(/-\d+$/, '');
+      if (!byChild[childName]) byChild[childName] = [];
+      byChild[childName].push(...d.files);
+    });
+
+    const children = Object.keys(byChild).sort();
+    const totalFiles = matched.flatMap(d => d.files).length;
+    const totalImgs  = matched.flatMap(d => d.files).filter(f => f.mimeType && f.mimeType.startsWith('image/')).length;
+    const totalVids  = totalFiles - totalImgs;
+    const scope = name ? `${cls} · ${name}` : cls;
 
     let html = `
       <div style="background:rgba(90,158,122,.06);border:1px solid rgba(90,158,122,.25);
@@ -2087,36 +2098,41 @@ async function checkMyUpload() {
         display:flex;align-items:center;gap:10px">
         <span style="font-size:1.2rem">✅</span>
         <div>
-          <p style="font-size:.8rem;font-weight:500;color:var(--success)">업로드 완료</p>
+          <p style="font-size:.8rem;font-weight:500;color:var(--success)">
+            ${name ? '업로드 완료' : `${children.length}명 업로드`}
+          </p>
           <p style="font-size:.7rem;color:var(--stone-lt);margin-top:2px">
-            ${weekLabel.replace('_주', '주')} · 사진 ${imgFiles.length}장${vidFiles.length ? ' · 영상 ' + vidFiles.length + '개' : ''}
+            ${weekLabel.replace('_주', '주')} · ${scope} · 사진 ${totalImgs}장${totalVids ? ' · 영상 ' + totalVids + '개' : ''}
           </p>
         </div>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(${Math.min(allFiles.length, 3)},1fr);gap:6px">`;
-
-    allFiles.slice(0, 6).forEach(f => {
-      const isImg = f.mimeType && f.mimeType.startsWith('image/');
-      html += `<div style="aspect-ratio:1;border-radius:8px;overflow:hidden;background:var(--cream);
-        position:relative;cursor:pointer" onclick="openLightbox('${f.id}','${f.mimeType}','${name}','${weekLabel}')">
-        ${isImg
-          ? `<img src="https://drive.google.com/thumbnail?id=${f.id}&sz=w300"
-              style="width:100%;height:100%;object-fit:cover"
-              onerror="this.style.display='none';this.parentNode.querySelector('.vid-badge').style.display='flex'">`
-          : ''}
-        <div class="vid-badge" style="display:${isImg ? 'none' : 'flex'};
-          position:absolute;inset:0;align-items:center;justify-content:center;
-          flex-direction:column;gap:4px;background:#111">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="#aaa"><path d="M8 5v14l11-7z"/></svg>
-          <span style="font-size:.62rem;color:#aaa">영상</span>
-        </div>
       </div>`;
-    });
 
-    html += '</div>';
-    if (allFiles.length > 6) {
-      html += `<p style="font-size:.7rem;color:var(--stone-lt);text-align:center;margin-top:8px">외 ${allFiles.length - 6}개</p>`;
-    }
+    children.forEach(childName => {
+      const files = byChild[childName];
+      if (!name) {
+        // 반 전체 보기: 어린이 이름 소제목
+        html += `<p style="font-size:.76rem;font-weight:500;color:var(--stone);margin:10px 0 6px">${childName}</p>`;
+      }
+      html += `<div style="display:grid;grid-template-columns:repeat(${Math.min(files.length, 3)},1fr);gap:6px;margin-bottom:8px">`;
+      files.forEach(f => {
+        const isImg = f.mimeType && f.mimeType.startsWith('image/');
+        html += `<div style="aspect-ratio:1;border-radius:8px;overflow:hidden;background:var(--cream);
+          position:relative;cursor:pointer" onclick="openLightbox('${f.id}','${f.mimeType}','${childName}','${weekLabel}')">
+          ${isImg
+            ? `<img src="https://drive.google.com/thumbnail?id=${f.id}&sz=w300"
+                style="width:100%;height:100%;object-fit:cover"
+                onerror="this.style.display='none';this.parentNode.querySelector('.vid-badge').style.display='flex'">`
+            : ''}
+          <div class="vid-badge" style="display:${isImg ? 'none' : 'flex'};
+            position:absolute;inset:0;align-items:center;justify-content:center;
+            flex-direction:column;gap:4px;background:#111">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="#aaa"><path d="M8 5v14l11-7z"/></svg>
+            <span style="font-size:.62rem;color:#aaa">영상</span>
+          </div>
+        </div>`;
+      });
+      html += '</div>';
+    });
 
     result.innerHTML = html;
 

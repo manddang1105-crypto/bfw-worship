@@ -1838,14 +1838,13 @@ function removeChild(name) {
 
 
 // ── 영상 보기 (유튜브 링크 관리) ──
-// 영상은 관리자가 추가한 것만 표시 (localStorage 저장)
-function getVideoList() {
-  try { return JSON.parse(localStorage.getItem('yt_videos') || '[]'); }
-  catch { return []; }
-}
-
-function saveVideoList(list) {
-  localStorage.setItem('yt_videos', JSON.stringify(list));
+// 영상 목록을 Apps Script 서버에서 가져옴 (모든 기기 동기화)
+async function fetchVideoList() {
+  try {
+    const res = await fetch(`${SCRIPT_URL}?action=getVideos`);
+    const data = await res.json();
+    return data.success ? data.data : [];
+  } catch { return []; }
 }
 
 function extractYoutubeId(url) {
@@ -1870,10 +1869,12 @@ async function fetchYoutubeTitle(videoId) {
   } catch { return ''; }
 }
 
-function renderVideoList() {
-  const list = getVideoList();
+async function renderVideoList() {
   const container = document.getElementById('videoList');
   const empty = document.getElementById('videoEmpty');
+  if (!container) return;
+  container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--stone-lt);font-size:.82rem">불러오는 중...</div>';
+  const list = await fetchVideoList();
   if (!container) return;
 
   if (list.length === 0) {
@@ -1910,10 +1911,6 @@ async function adminAddVideo(url) {
   const videoId = extractYoutubeId(url);
   if (!videoId) { alert('올바른 유튜브 링크를 입력해 주세요'); return; }
 
-  const list = getVideoList();
-  if (list.find(v => v.id === videoId)) { alert('이미 추가된 영상이에요'); return; }
-
-  // 제목 가져오기
   const titleEl = document.getElementById('adminVideoTitleInput');
   let title = titleEl ? titleEl.value.trim() : '';
   if (!title) title = await fetchYoutubeTitle(videoId);
@@ -1922,29 +1919,37 @@ async function adminAddVideo(url) {
   const now = new Date();
   const date = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
 
-  list.unshift({ id: videoId, title, date });
-  saveVideoList(list);
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: 'addVideo', password: ADMIN_PW, id: videoId, title, date })
+  });
 
-  // 입력 초기화
   const urlEl = document.getElementById('adminVideoUrlInput');
   if (urlEl) urlEl.value = '';
   if (titleEl) titleEl.value = '';
 
-  renderAdminVideoList();
-  alert('영상이 추가됐어요!');
+  alert('영상이 추가됐어요! 잠시 후 목록이 업데이트돼요.');
+  setTimeout(renderAdminVideoList, 2000);
 }
 
-function adminDeleteVideo(videoId) {
+async function adminDeleteVideo(videoId) {
   if (!confirm('이 영상을 삭제할까요?')) return;
-  const list = getVideoList().filter(v => v.id !== videoId);
-  saveVideoList(list);
-  renderAdminVideoList();
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: 'deleteVideoEntry', password: ADMIN_PW, id: videoId })
+  });
+  setTimeout(renderAdminVideoList, 2000);
 }
 
-function renderAdminVideoList() {
+async function renderAdminVideoList() {
   const wrap = document.getElementById('adminVideoList');
   if (!wrap) return;
-  const list = getVideoList();
+  wrap.innerHTML = '<div style="text-align:center;padding:20px;color:var(--stone-lt);font-size:.82rem">불러오는 중...</div>';
+  const list = await fetchVideoList();
 
   if (list.length === 0) {
     wrap.innerHTML = '<div style="text-align:center;padding:20px;color:var(--stone-lt);font-size:.82rem">등록된 영상이 없어요</div>';

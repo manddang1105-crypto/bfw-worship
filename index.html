@@ -2145,16 +2145,41 @@ async function checkMyUpload() {
 }
 
 // ── 영상 보기 (유튜브 링크 관리) ──
-// 영상 목록을 Apps Script 서버에서 가져옴 (모든 기기 동기화)
-async function fetchVideoList() {
+const VIDEO_CACHE_KEY = 'bfc_video_list';
+const VIDEO_CACHE_TTL = 30 * 60 * 1000; // 30분
+let videoFetchPromise = null; // 중복 요청 방지
+
+function getVideoCache() {
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
-    const res = await fetch(`${SCRIPT_URL}?action=getVideos`, { signal: controller.signal });
-    clearTimeout(timeout);
-    const data = await res.json();
-    return data.success ? data.data : [];
-  } catch { return []; }
+    const raw = localStorage.getItem(VIDEO_CACHE_KEY);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    if (Date.now() - ts > VIDEO_CACHE_TTL) return null;
+    return data;
+  } catch { return null; }
+}
+
+function setVideoCache(data) {
+  try { localStorage.setItem(VIDEO_CACHE_KEY, JSON.stringify({ ts: Date.now(), data })); } catch {}
+}
+
+async function fetchVideoList() {
+  // 동시 요청 중이면 같은 Promise 공유
+  if (videoFetchPromise) return videoFetchPromise;
+  videoFetchPromise = (async () => {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
+      const res = await fetch(`${SCRIPT_URL}?action=getVideos`, { signal: controller.signal });
+      clearTimeout(timeout);
+      const data = await res.json();
+      const list = data.success ? data.data : [];
+      setVideoCache(list);
+      return list;
+    } catch { return null; } // null = 네트워크 실패
+    finally { videoFetchPromise = null; }
+  })();
+  return videoFetchPromise;
 }
 
 function extractYoutubeId(url) {
@@ -2179,22 +2204,8 @@ async function fetchYoutubeTitle(videoId) {
   } catch { return ''; }
 }
 
-async function renderVideoList() {
-  const container = document.getElementById('videoList');
-  const empty = document.getElementById('videoEmpty');
-  if (!container) return;
-  container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--stone-lt);font-size:.82rem">불러오는 중...</div>';
-  const list = await fetchVideoList();
-  if (!container) return;
-
-  if (list.length === 0) {
-    container.innerHTML = '';
-    if (empty) empty.style.display = 'block';
-    return;
-  }
-  if (empty) empty.style.display = 'none';
-
-  container.innerHTML = list.map((v, i) => `
+function buildVideoListHTML(list) {
+  return list.map(v => `
     <a class="video-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener">
       <div class="video-thumb-wrap">
         <img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg"
@@ -2215,6 +2226,34 @@ async function renderVideoList() {
       </div>
     </a>
   `).join('');
+}
+
+async function renderVideoList() {
+  const container = document.getElementById('videoList');
+  const empty = document.getElementById('videoEmpty');
+  if (!container) return;
+
+  // 1) 캐시된 데이터 즉시 표시
+  const cached = getVideoCache();
+  if (cached && cached.length > 0) {
+    if (empty) empty.style.display = 'none';
+    container.innerHTML = buildVideoListHTML(cached);
+  } else {
+    container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--stone-lt);font-size:.82rem">불러오는 중...</div>';
+  }
+
+  // 2) 백그라운드에서 최신 데이터 가져와 갱신
+  const fresh = await fetchVideoList();
+  if (!container) return;
+  if (fresh === null) return; // 네트워크 실패 → 캐시 유지
+
+  if (fresh.length === 0) {
+    container.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  container.innerHTML = buildVideoListHTML(fresh);
 }
 
 async function adminAddVideo(url) {
@@ -2241,6 +2280,7 @@ async function adminAddVideo(url) {
   if (titleEl) titleEl.value = '';
 
   alert('영상이 추가됐어요! 잠시 후 목록이 업데이트돼요.');
+  try { localStorage.removeItem(VIDEO_CACHE_KEY); } catch {}
   setTimeout(renderAdminVideoList, 4000);
 }
 
@@ -2252,6 +2292,7 @@ async function adminDeleteVideo(videoId) {
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify({ action: 'deleteVideoEntry', password: ADMIN_PW, id: videoId })
   });
+  try { localStorage.removeItem(VIDEO_CACHE_KEY); } catch {}
   setTimeout(renderAdminVideoList, 2000);
 }
 
@@ -2301,6 +2342,9 @@ async function renderAdminVideoList() {
 // ── INIT ──
 checkUploadTime();
 setInterval(checkUploadTime, 60000);
+
+// 페이지 로드 시 영상 목록 미리 fetch (탭 전환 시 즉시 표시용)
+fetchVideoList();
 
 // ── PWA INSTALL ──
 let deferredInstallPrompt = null;

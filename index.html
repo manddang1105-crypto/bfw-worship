@@ -957,6 +957,9 @@ select.float-input.selected{color:var(--charcoal)}
           style="font-size:.75rem;color:var(--gold-dk);padding:4px 12px;border:1px solid var(--gold-lt);
           border-radius:100px;background:transparent;cursor:pointer;font-family:inherit">← 뒤로</button>
       </div>
+      <!-- 주차 필터 -->
+      <div id="adminWeekChips" style="display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;
+        padding-bottom:8px;margin-bottom:12px;-webkit-overflow-scrolling:touch"></div>
       <div id="adminFileList"></div>
     </div>
   </div>
@@ -1814,6 +1817,7 @@ let adminLoggedIn = false;
 let admPendingDelId = null;
 let admPendingRenId = null;
 let adminCurrentClass = null;
+let adminCurrentWeek = 'all';
 let adminAlbumData = [];
 
 function checkAdminPw() {
@@ -1876,21 +1880,47 @@ async function loadAdminClassBtns() {
 
 async function loadAdminFiles(className) {
   adminCurrentClass = className;
+  adminCurrentWeek = getCurrentWeekLabel(); // 기본값: 이번 주
   document.getElementById('adminFileSection').style.display = 'block';
   document.getElementById('adminFileTitle').textContent = className + ' 파일 목록';
+  renderAdminFiles();
+}
+
+function renderAdminFiles() {
+  const className = adminCurrentClass;
   const list = document.getElementById('adminFileList');
-  list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--stone-lt);font-size:.82rem">불러오는 중...</div>';
 
   const classData = adminAlbumData.filter(d => d.class === className);
   const allFiles = classData.flatMap(d => d.files.map(f => ({...f, child:d.child, week:d.week})));
 
-  if (!allFiles.length) {
+  // 주차 목록 추출 (최신순)
+  const weeks = [...new Set(allFiles.map(f => f.week))].sort().reverse();
+
+  // 주차 필터 칩
+  const chipWrap = document.getElementById('adminWeekChips');
+  chipWrap.innerHTML = ['all', ...weeks].map(w => {
+    const active = w === adminCurrentWeek;
+    const label = w === 'all' ? '전체' : formatWeekLabel(w);
+    return `<div onclick="adminFilterWeek('${w}')"
+      style="padding:5px 12px;border-radius:100px;cursor:pointer;font-size:.75rem;
+      border:1.5px solid ${active ? 'var(--gold)' : 'var(--border)'};
+      background:${active ? 'rgba(184,151,90,.12)' : 'var(--white)'};
+      color:${active ? 'var(--gold-dk)' : 'var(--stone-lt)'};font-weight:${active ? '500' : '300'};
+      white-space:nowrap">${label}</div>`;
+  }).join('');
+
+  // 선택 주차로 필터
+  const filtered = adminCurrentWeek === 'all'
+    ? allFiles
+    : allFiles.filter(f => f.week === adminCurrentWeek);
+
+  if (!filtered.length) {
     list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--stone-lt);font-size:.82rem">파일이 없어요</div>';
     return;
   }
 
   list.innerHTML = '';
-  allFiles.forEach(file => {
+  filtered.forEach(file => {
     const isImg = file.mimeType && file.mimeType.startsWith('image/');
     const card = document.createElement('div');
     card.className = 'admin-file-card';
@@ -1901,7 +1931,7 @@ async function loadAdminFiles(className) {
       </div>
       <div class="admin-file-info">
         <div class="admin-file-name">${file.name}</div>
-        <div class="admin-file-meta">${file.child} · ${file.week.replace('_주','주')}</div>
+        <div class="admin-file-meta">${file.child} · ${formatWeekLabel(file.week)}</div>
       </div>
       <div class="admin-file-btns">
         <button class="adbtn adbtn-ren"
@@ -1913,9 +1943,15 @@ async function loadAdminFiles(className) {
   });
 }
 
+function adminFilterWeek(week) {
+  adminCurrentWeek = week;
+  renderAdminFiles();
+}
+
 function adminBackToClass() {
   document.getElementById('adminFileSection').style.display = 'none';
   adminCurrentClass = null;
+  adminCurrentWeek = 'all';
 }
 
 function openAdmDel(id, name) {

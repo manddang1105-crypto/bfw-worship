@@ -1293,17 +1293,18 @@ async function doSubmit() {
       const isVid = mimeType.startsWith('video/');
       textEl.textContent = total > 1 ? `파일 전송 중... (${i+1}/${total})` : '파일 전송 중...';
 
-      // base64 변환 (arrayBuffer 사용 - FileReader 동시 실행 충돌 없음)
+      // base64 변환 (FileReader 사용 - 인앱 브라우저 임시파일 권한 문제 대응)
       let b64;
       try {
-        const arrayBuffer = await uploadFile.arrayBuffer();
-        const bytes = new Uint8Array(arrayBuffer);
-        let binary = '';
-        const chunkSize = 8192;
-        for (let j = 0; j < bytes.length; j += chunkSize) {
-          binary += String.fromCharCode(...bytes.subarray(j, j + chunkSize));
-        }
-        b64 = btoa(binary);
+        b64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const dataUrl = reader.result;
+            resolve(dataUrl.split(',')[1]);
+          };
+          reader.onerror = () => reject(reader.error);
+          reader.readAsDataURL(uploadFile);
+        });
       } catch(b64Err) {
         const extra = `파일크기: ${(uploadFile.size/MB).toFixed(1)}MB, 타입: ${mimeType}`;
         reportError(`base64 변환 실패: ${b64Err.message}`, cls, name, `base64 단계 (${i+1}번째)`, extra);

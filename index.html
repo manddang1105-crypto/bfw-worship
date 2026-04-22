@@ -983,7 +983,7 @@ select.float-input.selected{color:var(--charcoal)}
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxx_4KeojL5_-xMzRjfTp4Z_xCz-uHt-X-B6iAv9HNybhsfRq7CAbITdvu7Zy8wvmQz/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw80knrO7X0SHIqMrQVSsVy3Hmqpdkx-aCS1IrLIYh9hdElkZ8UKHzU--dxDu7bxsZt/exec';
 const CLASS_LIST = ['선경나라','세희나라','아라나라','애경나라','연옥나라','영실나라','재신나라','정일나라','주영나라','진영나라','현진나라','혜정나라','혜진나라'];
 const CLASS_EMOJI = ['','','','','','','','','','','','',''];
 
@@ -1999,6 +1999,7 @@ async function confirmAdmDel() {
   try {
     const res = await fetch(SCRIPT_URL, {
       method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({ action:'deleteFile', fileId:admPendingDelId, password:ADMIN_PW })
     });
     const data = await res.json();
@@ -2026,6 +2027,7 @@ async function confirmAdmRen() {
   try {
     const res = await fetch(SCRIPT_URL, {
       method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({ action:'renameFile', fileId:admPendingRenId, newName, password:ADMIN_PW })
     });
     const data = await res.json();

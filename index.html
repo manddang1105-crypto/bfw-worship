@@ -1931,14 +1931,14 @@ function renderAdminFiles() {
           onerror="this.parentNode.style.background='var(--cream)'">` : ''}
       </div>
       <div class="admin-file-info">
-        <div class="admin-file-name">${file.name}</div>
+        <div class="admin-file-name">${file.fname || (file.child + (file.mimeType && file.mimeType.startsWith('video/') ? ' 영상' : ' 사진'))}</div>
         <div class="admin-file-meta">${file.child} · ${formatWeekLabel(file.week)}</div>
       </div>
       <div class="admin-file-btns">
         <button class="adbtn adbtn-ren"
-          onclick="openAdmRen('${file.id}','${file.name}')">이름변경</button>
+          onclick="openAdmRen('${file.id}','${file.fname || file.child}')">이름변경</button>
         <button class="adbtn adbtn-del"
-          onclick="openAdmDel('${file.id}','${file.name}')">삭제</button>
+          onclick="openAdmDel('${file.id}','${file.fname || file.child}')">삭제</button>
       </div>`;
     list.appendChild(card);
   });

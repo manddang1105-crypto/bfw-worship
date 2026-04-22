@@ -527,6 +527,53 @@ select.float-input.selected{color:var(--charcoal)}
 </head>
 <body>
 
+<!-- 앱 설치 배너 -->
+<div id="installBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;
+  background:white;border-top:1px solid #E0D8CC;padding:16px 20px 24px;
+  box-shadow:0 -4px 20px rgba(0,0,0,0.12)">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+    <img src="/icon-192.png" style="width:48px;height:48px;border-radius:12px;flex-shrink:0">
+    <div>
+      <div style="font-size:.9rem;font-weight:600;color:#2C2C2C;margin-bottom:2px">BFC 가정예배</div>
+      <div style="font-size:.75rem;color:#888">홈 화면에 추가하면 앱처럼 사용할 수 있어요</div>
+    </div>
+    <button onclick="dismissInstall()" style="margin-left:auto;background:none;border:none;
+      font-size:1.2rem;color:#aaa;cursor:pointer;padding:4px">✕</button>
+  </div>
+
+  <!-- Android -->
+  <button id="installBtn" style="display:none;width:100%;padding:14px;border-radius:12px;
+    border:none;background:#8BAF7C;color:white;font-size:.9rem;font-weight:600;
+    font-family:inherit;cursor:pointer" onclick="triggerInstall()">
+    홈 화면에 설치하기
+  </button>
+
+  <!-- iOS -->
+  <div id="iosGuide" style="display:none">
+    <div style="font-size:.78rem;color:#555;margin-bottom:10px;font-weight:500">설치 방법 (Safari)</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px;font-size:.78rem;color:#444">
+        <span style="background:#8BAF7C;color:white;border-radius:50%;width:22px;height:22px;
+          display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0">1</span>
+        하단 공유 버튼(□↑) 탭
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:.78rem;color:#444">
+        <span style="background:#8BAF7C;color:white;border-radius:50%;width:22px;height:22px;
+          display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0">2</span>
+        "홈 화면에 추가" 선택
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:.78rem;color:#444">
+        <span style="background:#8BAF7C;color:white;border-radius:50%;width:22px;height:22px;
+          display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0">3</span>
+        추가 버튼 탭 → 완료!
+      </div>
+    </div>
+    <div style="font-size:.72rem;color:#aaa;margin-top:10px;text-align:center">
+      카카오톡에서 열었다면 우측 상단 ··· → Safari로 열기
+    </div>
+  </div>
+</div>
+
 <!-- 꽃잎 파티클 -->
 <div class="petals-wrap" id="petalsWrap" aria-hidden="true"></div>
 
@@ -2479,8 +2526,63 @@ function triggerInstall() {
 }
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/bfw-worship/sw.js');
+  navigator.serviceWorker.register('/sw.js');
 }
+
+// ── 앱 설치 배너 ──
+let deferredPrompt = null;
+
+function isIOS() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent);
+}
+function isInStandaloneMode() {
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+}
+function isKakaoTalk() {
+  return /KAKAOTALK/i.test(navigator.userAgent);
+}
+
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallBanner('android');
+});
+
+function showInstallBanner(type) {
+  if (isInStandaloneMode()) return;
+  const dismissed = localStorage.getItem('installDismissed');
+  if (dismissed && Date.now() - parseInt(dismissed) < 7 * 24 * 60 * 60 * 1000) return;
+
+  const banner = document.getElementById('installBanner');
+  banner.style.display = 'block';
+  if (type === 'android') {
+    document.getElementById('installBtn').style.display = 'block';
+  } else {
+    document.getElementById('iosGuide').style.display = 'block';
+  }
+}
+
+function triggerInstall() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function() {
+    deferredPrompt = null;
+    document.getElementById('installBanner').style.display = 'none';
+  });
+}
+
+function dismissInstall() {
+  localStorage.setItem('installDismissed', Date.now().toString());
+  document.getElementById('installBanner').style.display = 'none';
+}
+
+window.addEventListener('load', function() {
+  if (isInStandaloneMode()) return;
+  if (isKakaoTalk()) return;
+  if (isIOS()) {
+    setTimeout(function() { showInstallBanner('ios'); }, 3000);
+  }
+});
 </script>
 
   <!-- 오류 신고 팝업 -->

@@ -2532,13 +2532,13 @@ if ('serviceWorker' in navigator) {
 // ── 앱 설치 배너 ──
 let deferredPrompt = null;
 
-function isIOS() {
+function checkIsIOS() {
   return /iphone|ipad|ipod/i.test(navigator.userAgent);
 }
-function isInStandaloneMode() {
-  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+function checkIsStandalone() {
+  return window.matchMedia('(display-mode: standalone)').matches || !!window.navigator.standalone;
 }
-function isKakaoTalk() {
+function checkIsKakao() {
   return /KAKAOTALK/i.test(navigator.userAgent);
 }
 
@@ -2549,7 +2549,7 @@ window.addEventListener('beforeinstallprompt', function(e) {
 });
 
 function showInstallBanner(type) {
-  if (isInStandaloneMode()) return;
+  if (checkIsStandalone()) return;
   const dismissed = localStorage.getItem('installDismissed');
   if (dismissed && Date.now() - parseInt(dismissed) < 7 * 24 * 60 * 60 * 1000) return;
 
@@ -2577,9 +2577,9 @@ function dismissInstall() {
 }
 
 window.addEventListener('load', function() {
-  if (isInStandaloneMode()) return;
-  if (isKakaoTalk()) return;
-  if (isIOS()) {
+  if (checkIsStandalone()) return;
+  if (checkIsKakao()) return;
+  if (checkIsIOS()) {
     setTimeout(function() { showInstallBanner('ios'); }, 3000);
   }
 });

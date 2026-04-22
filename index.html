@@ -918,6 +918,23 @@ select.float-input.selected{color:var(--charcoal)}
         border-radius:100px;background:transparent;cursor:pointer;font-family:inherit">로그아웃</button>
     </div>
 
+    <!-- 카카오톡 공유 링크 -->
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px">
+      <div style="font-size:.78rem;color:var(--stone);margin-bottom:10px;font-weight:500">카카오톡 공유 링크</div>
+      <p style="font-size:.72rem;color:var(--stone-lt);margin-bottom:12px;line-height:1.6">
+        배포 후 이 버튼으로 링크를 복사해서 카카오톡에 공유하세요.<br>매주 새 링크를 공유해야 업데이트가 반영돼요.
+      </p>
+      <button onclick="copyShareLink()"
+        style="width:100%;padding:12px;border-radius:var(--radius-sm);border:none;
+        background:var(--sage);color:white;font-family:inherit;font-size:.85rem;
+        font-weight:500;cursor:pointer">
+        이번 주 링크 복사
+      </button>
+      <div id="shareLinkMsg" style="font-size:.72rem;color:var(--success);text-align:center;margin-top:8px;display:none">
+        링크가 복사됐어요! 카카오톡에 붙여넣기 하세요.
+      </div>
+    </div>
+
     <!-- 영상 추가 -->
     <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px">
       <div style="font-size:.78rem;color:var(--stone);margin-bottom:12px;font-weight:500">영상 추가</div>
@@ -1834,6 +1851,19 @@ function checkAdminPw() {
     document.getElementById('adminPwField').value = '';
     setTimeout(() => document.getElementById('adminPwErr').textContent = '', 2000);
   }
+}
+
+function copyShareLink() {
+  const now = new Date();
+  const v = now.getFullYear().toString()
+    + String(now.getMonth() + 1).padStart(2, '0')
+    + String(now.getDate()).padStart(2, '0');
+  const url = 'https://manddang1105-crypto.github.io/bfw-worship/?v=' + v;
+  navigator.clipboard.writeText(url).then(() => {
+    const msg = document.getElementById('shareLinkMsg');
+    msg.style.display = 'block';
+    setTimeout(() => { msg.style.display = 'none'; }, 3000);
+  });
 }
 
 function exitAdmin() {

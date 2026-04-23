@@ -974,6 +974,24 @@ select.float-input.selected{color:var(--charcoal)}
           style="font-size:.75rem;color:var(--gold-dk);padding:4px 12px;border:1px solid var(--gold-lt);
           border-radius:100px;background:transparent;cursor:pointer;font-family:inherit">← 뒤로</button>
       </div>
+      <!-- 수동 등록 -->
+      <div style="margin-bottom:12px">
+        <button onclick="toggleRegisterForm()"
+          style="font-size:.75rem;color:var(--stone-lt);padding:4px 12px;border:1px dashed var(--border);
+          border-radius:100px;background:transparent;cursor:pointer;font-family:inherit">+ 파일 수동 등록</button>
+        <div id="registerForm" style="display:none;margin-top:10px;padding:12px;background:var(--cream);
+          border-radius:12px;font-size:.82rem;display:flex;flex-direction:column;gap:8px">
+          <input id="regFileId" placeholder="드라이브 파일 ID"
+            style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:.82rem">
+          <input id="regChild" placeholder="아이 이름"
+            style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:.82rem">
+          <input id="regWeek" placeholder="주차 (예: 2026-04-20_주, 비우면 이번 주)"
+            style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:.82rem">
+          <button onclick="submitRegisterFile()"
+            style="padding:8px;background:var(--gold);color:white;border:none;border-radius:8px;
+            font-family:inherit;font-size:.82rem;cursor:pointer;font-weight:500">등록</button>
+        </div>
+      </div>
       <!-- 주차 필터 -->
       <div id="adminWeekChips" style="display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;
         padding-bottom:8px;margin-bottom:12px;-webkit-overflow-scrolling:touch"></div>
@@ -1989,6 +2007,39 @@ function openAdmDel(id, name) {
   admPendingDelId = id;
   document.getElementById('admDelName').textContent = name;
   document.getElementById('admDelPopup').style.display = 'flex';
+}
+function toggleRegisterForm() {
+  const f = document.getElementById('registerForm');
+  f.style.display = f.style.display === 'none' ? 'flex' : 'none';
+}
+async function submitRegisterFile() {
+  const fileId    = document.getElementById('regFileId').value.trim();
+  const childName = document.getElementById('regChild').value.trim();
+  const week      = document.getElementById('regWeek').value.trim();
+  if (!fileId || !childName) { alert('파일 ID와 아이 이름을 입력해주세요'); return; }
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'registerFile',
+        fileId, childName,
+        className: adminCurrentClass,
+        week,
+        password: ADMIN_PW
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert('등록 완료!');
+      document.getElementById('regFileId').value = '';
+      document.getElementById('regChild').value = '';
+      document.getElementById('regWeek').value = '';
+      document.getElementById('registerForm').style.display = 'none';
+      await loadAdminClassBtns();
+      loadAdminFiles(adminCurrentClass);
+    } else { alert('등록 실패: ' + (data.error || '')); }
+  } catch(e) { alert('오류: ' + e.message); }
 }
 function closeAdmDel() {
   document.getElementById('admDelPopup').style.display = 'none';

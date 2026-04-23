@@ -960,6 +960,17 @@ select.float-input.selected{color:var(--charcoal)}
       <div id="adminVideoList"></div>
     </div>
 
+    <!-- 누락 파일 스캔 -->
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-size:.78rem;color:var(--stone);font-weight:500">누락 파일 스캔</div>
+        <button onclick="scanMissingFiles()"
+          style="font-size:.75rem;color:var(--gold-dk);padding:4px 12px;border:1px solid var(--gold-lt);
+          border-radius:100px;background:transparent;cursor:pointer;font-family:inherit">🔍 스캔</button>
+      </div>
+      <div id="scanResult" style="font-size:.78rem;color:var(--stone-lt)">스캔 버튼을 눌러 드라이브에 있지만 로그에 없는 파일을 확인하세요.</div>
+    </div>
+
     <!-- 반 선택 (드라이브 파일 관리) -->
     <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px">
       <div style="font-size:.78rem;color:var(--stone);margin-bottom:10px;font-weight:500">드라이브 파일 관리</div>
@@ -2008,6 +2019,52 @@ function openAdmDel(id, name) {
   document.getElementById('admDelName').textContent = name;
   document.getElementById('admDelPopup').style.display = 'flex';
 }
+async function scanMissingFiles() {
+  const box = document.getElementById('scanResult');
+  box.innerHTML = '스캔 중...';
+  try {
+    const res = await fetch(`${SCRIPT_URL}?action=scanFolder&pw=${ADMIN_PW}`);
+    const data = await res.json();
+    if (!data.success) { box.innerHTML = '오류: ' + (data.error||''); return; }
+    if (data.files.length === 0) { box.innerHTML = '누락 파일 없음 ✓'; return; }
+    box.innerHTML = `<div style="margin-bottom:8px;color:var(--charcoal);font-weight:500">${data.files.length}개 누락 파일</div>` +
+      data.files.map(f => `
+        <div style="border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--cream)">
+          <div style="font-size:.78rem;color:var(--charcoal);margin-bottom:4px">${f.name}</div>
+          <div style="font-size:.7rem;color:var(--stone-lt);margin-bottom:8px">${f.created}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <select id="cls_${f.id}" style="flex:1;padding:5px;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:.75rem">
+              ${CLASS_LIST.map(c=>`<option value="${c}">${c}</option>`).join('')}
+            </select>
+            <input id="child_${f.id}" placeholder="아이 이름" style="flex:1;padding:5px;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:.75rem">
+            <input id="week_${f.id}" placeholder="주차 (예: 2026-04-20_주)" style="flex:1;min-width:160px;padding:5px;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:.75rem">
+            <button onclick="registerMissing('${f.id}','${f.mime}')"
+              style="padding:5px 12px;background:var(--gold);color:white;border:none;border-radius:6px;font-family:inherit;font-size:.75rem;cursor:pointer">등록</button>
+          </div>
+        </div>`).join('');
+  } catch(e) { box.innerHTML = '오류: ' + e.message; }
+}
+
+async function registerMissing(fileId, mime) {
+  const cls   = document.getElementById('cls_'   + fileId).value;
+  const child = document.getElementById('child_' + fileId).value.trim();
+  const week  = document.getElementById('week_'  + fileId).value.trim();
+  if (!child) { alert('아이 이름을 입력해주세요'); return; }
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action:'registerFile', fileId, className:cls, childName:child, week, password:ADMIN_PW })
+    });
+    const data = await res.json();
+    if (data.success) {
+      const row = document.getElementById('cls_' + fileId).closest('div[style*="border"]');
+      row.innerHTML = `<div style="color:var(--gold-dk);font-size:.78rem">✓ 등록 완료 — ${cls} ${child}</div>`;
+      await loadAdminClassBtns();
+    } else { alert('실패: ' + (data.error||'')); }
+  } catch(e) { alert('오류: ' + e.message); }
+}
+
 function toggleRegisterForm() {
   const f = document.getElementById('registerForm');
   f.style.display = f.style.display === 'none' ? 'flex' : 'none';

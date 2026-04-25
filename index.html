@@ -941,7 +941,7 @@ select.float-input.selected{color:var(--charcoal)}
   </header>
 
   <!-- 이번 주 기도 교사 -->
-  <div class="prayer-week-card" id="prayerWeekCard"></div>
+  <div class="prayer-week-card" id="prayerWeekCard" onclick="toggleWeekCard()" style="cursor:pointer"></div>
 
   <!-- 검색 -->
   <div class="prayer-search-wrap">
@@ -2912,27 +2912,48 @@ const PRAYER_TEACHERS = [
 ];
 
 let prayerInited = false;
+let weekCardOpen = false;
 
 function initPrayer() {
   if (prayerInited) return;
   prayerInited = true;
-  renderPrayerWeek();
+  renderPrayerWeek(false);
   renderPrayerList('');
 }
 
-function renderPrayerWeek() {
+function getWeekTeacher() {
   const now = new Date();
-  const startOfYear = new Date(now.getFullYear(), 0, 1);
-  const weekNum = Math.ceil(((now - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);
+  const start = new Date(now.getFullYear(), 0, 1);
+  const weekNum = Math.ceil(((now - start) / 86400000 + start.getDay() + 1) / 7);
   const teachers = PRAYER_TEACHERS.filter(t => t.items.length > 0);
-  const teacher = teachers[(weekNum - 1) % teachers.length];
+  return { teacher: teachers[(weekNum - 1) % teachers.length], weekNum };
+}
+
+function renderPrayerWeek(open) {
   const card = document.getElementById('prayerWeekCard');
-  if (!card || !teacher) return;
+  if (!card) return;
+  const { teacher, weekNum } = getWeekTeacher();
+  if (!teacher) return;
+  const itemsHtml = teacher.items.map((item, i) => `
+    <div class="prayer-item" style="padding:10px 0;border-bottom:1px solid rgba(139,175,124,.15)">
+      <span class="prayer-item-num">${i + 1}</span>
+      <span class="prayer-item-text">${item}</span>
+    </div>`).join('');
   card.innerHTML = `
-    <div class="prayer-week-label">✦ 이번 주 중보기도 교사 (${weekNum}주차)</div>
-    <div class="prayer-week-name">${teacher.name} 선생님</div>
-    <div class="prayer-week-hint">이번 주 교사들이 함께 집중 기도하는 분입니다<br>
-      ${teacher.items[0].slice(0, 42)}${teacher.items[0].length > 42 ? '…' : ''}</div>`;
+    <div style="padding:18px 20px 14px">
+      <div class="prayer-week-label">✦ 이번 주 중보기도 교사 · ${weekNum}주차</div>
+      <div class="prayer-week-name">${teacher.name}</div>
+      <div class="prayer-week-hint" style="margin-top:6px;display:flex;align-items:center;gap:6px">
+        <span>기도제목 ${teacher.items.length}개</span>
+        <span style="color:var(--sage-dk);font-weight:500">${open ? '▲ 접기' : '▼ 전체 보기'}</span>
+      </div>
+    </div>
+    ${open ? `<div style="border-top:1px solid rgba(139,175,124,.2);padding:12px 20px 18px">${itemsHtml}</div>` : ''}`;
+}
+
+function toggleWeekCard() {
+  weekCardOpen = !weekCardOpen;
+  renderPrayerWeek(weekCardOpen);
 }
 
 function renderPrayerList(filter) {

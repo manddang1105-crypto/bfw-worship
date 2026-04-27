@@ -1050,7 +1050,12 @@ select.float-input.selected{color:var(--charcoal)}
 
     <!-- 반 선택 (드라이브 파일 관리) -->
     <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px">
-      <div style="font-size:.78rem;color:var(--stone);margin-bottom:10px;font-weight:500">드라이브 파일 관리</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-size:.78rem;color:var(--stone);font-weight:500">드라이브 파일 관리</div>
+        <select id="adminWeekSelect" onchange="onAdminWeekChange()"
+          style="font-size:.75rem;padding:4px 8px;border:1px solid var(--border);border-radius:8px;
+          font-family:inherit;color:var(--charcoal);background:var(--white)"></select>
+      </div>
       <div style="display:flex;flex-wrap:wrap;gap:8px" id="adminClassBtns"></div>
     </div>
 
@@ -1944,6 +1949,7 @@ let admPendingRenId = null;
 let adminCurrentClass = null;
 let adminCurrentWeek = 'all';
 let adminAlbumData = [];
+let adminSelectedWeek = '';
 
 function checkAdminPw() {
   const pw = document.getElementById('adminPwField').value;
@@ -1993,8 +1999,34 @@ async function loadAdminClassBtns() {
     adminAlbumData = data.success ? data.data : [];
   } catch { adminAlbumData = []; }
 
+  // 전체 주차 목록 추출 (최신순)
+  const allWeeks = [...new Set(adminAlbumData.map(d => d.week))].sort().reverse();
+
+  // 주차 셀렉트 업데이트
+  const sel = document.getElementById('adminWeekSelect');
+  const curWeek = getCurrentWeekLabel();
+  if (!adminSelectedWeek || !allWeeks.includes(adminSelectedWeek)) {
+    adminSelectedWeek = allWeeks.includes(curWeek) ? curWeek : (allWeeks[0] || curWeek);
+  }
+  sel.innerHTML = allWeeks.map(w =>
+    `<option value="${w}" ${w === adminSelectedWeek ? 'selected' : ''}>${formatWeekLabel(w)}</option>`
+  ).join('');
+
+  renderAdminClassBtns();
+}
+
+function onAdminWeekChange() {
+  adminSelectedWeek = document.getElementById('adminWeekSelect').value;
+  document.getElementById('adminFileSection').style.display = 'none';
+  adminCurrentClass = null;
+  renderAdminClassBtns();
+}
+
+function renderAdminClassBtns() {
+  const wrap = document.getElementById('adminClassBtns');
   const classes = {};
   adminAlbumData.forEach(d => {
+    if (d.week !== adminSelectedWeek) return;
     if (!classes[d.class]) classes[d.class] = 0;
     classes[d.class] += d.files.length;
   });
@@ -2018,7 +2050,7 @@ async function loadAdminClassBtns() {
 
 async function loadAdminFiles(className) {
   adminCurrentClass = className;
-  adminCurrentWeek = getCurrentWeekLabel(); // 기본값: 이번 주
+  adminCurrentWeek = adminSelectedWeek || getCurrentWeekLabel();
   document.getElementById('adminFileSection').style.display = 'block';
   document.getElementById('adminFileTitle').textContent = className + ' 파일 목록';
   renderAdminFiles();

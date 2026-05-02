@@ -1107,6 +1107,8 @@ let lastError = null; // 가장 최근 에러 저장
 let currentClass = null;
 let currentChild = null;
 let currentWeek = 'all';
+let currentChildPage = 0;
+let currentChildList = [];
 
 // ── 시간 체크 ──
 function isUploadBlocked() {
@@ -1792,37 +1794,28 @@ function showClassView() {
 }
 
 function showChildView(className) {
-  currentClass = className; currentChild = null; currentWeek = 'all';
+  currentClass = className; currentChild = null; currentWeek = 'all'; currentChildPage = 0;
   document.getElementById('albumSub').textContent = className;
 
   const classData = albumData.filter(d => d.class === className);
   const children = {};
   classData.forEach(d => {
-    if (!children[d.child]) children[d.child] = { weeks: new Set(), files: 0 };
+    if (!children[d.child]) children[d.child] = { weeks: new Set(), files: 0, latestWeek: '' };
     children[d.child].weeks.add(d.week);
     children[d.child].files += d.files.length;
+    if (d.week > children[d.child].latestWeek) children[d.child].latestWeek = d.week;
   });
 
-  if (Object.keys(children).length === 0) {
+  // 최신 주차 기준 내림차순 정렬
+  currentChildList = Object.keys(children)
+    .sort((a, b) => children[b].latestWeek.localeCompare(children[a].latestWeek))
+    .map(child => ({ child, info: children[child] }));
+
+  if (currentChildList.length === 0) {
     document.getElementById('childView').innerHTML =
       `<div class="empty-state"><p>아직 업로드된 사진이 없어요</p></div>`;
   } else {
-    let html = '<div class="child-list">';
-    Object.keys(children).sort().forEach(child => {
-      const info = children[child];
-      html += `<div class="child-card" onclick="showPhotoView('${className}','${child}')">
-        <div class="child-info">
-          <div class="child-avatar">${child.charAt(0)}</div>
-          <div>
-            <div class="child-name">${child}</div>
-            <div class="child-meta">${info.weeks.size}주차 · ${info.files}개</div>
-          </div>
-        </div>
-        <span style="color:var(--stone-lt)">›</span>
-      </div>`;
-    });
-    html += '</div>';
-    document.getElementById('childView').innerHTML = html;
+    renderChildPage(className);
   }
 
   document.getElementById('classView').style.display = 'none';
@@ -1833,6 +1826,60 @@ function showChildView(className) {
     { label: '전체 반', action: 'showClassView()' },
     { label: className, action: null }
   ]);
+}
+
+function renderChildPage(className) {
+  const PAGE_SIZE = 5;
+  const total = currentChildList.length;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  const start = currentChildPage * PAGE_SIZE;
+  const pageItems = currentChildList.slice(start, start + PAGE_SIZE);
+
+  let html = '<div class="child-list">';
+  pageItems.forEach(({ child, info }) => {
+    html += `<div class="child-card" onclick="showPhotoView('${className}','${child}')">
+      <div class="child-info">
+        <div class="child-avatar">${child.charAt(0)}</div>
+        <div>
+          <div class="child-name">${child}</div>
+          <div class="child-meta">${info.weeks.size}주차 · ${info.files}개</div>
+        </div>
+      </div>
+      <span style="color:var(--stone-lt)">›</span>
+    </div>`;
+  });
+  html += '</div>';
+
+  if (totalPages > 1) {
+    html += `<div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:16px">
+      <button onclick="changeChildPage(-1)"
+        ${currentChildPage === 0 ? 'disabled' : ''}
+        style="padding:8px 20px;border-radius:100px;border:1.5px solid var(--border);
+        background:var(--white);font-family:inherit;font-size:.82rem;cursor:pointer;
+        color:${currentChildPage === 0 ? 'var(--stone-lt)' : 'var(--charcoal)'};
+        opacity:${currentChildPage === 0 ? '.4' : '1'}">
+        ‹ 이전
+      </button>
+      <span style="font-size:.78rem;color:var(--stone-lt)">${currentChildPage + 1} / ${totalPages}</span>
+      <button onclick="changeChildPage(1)"
+        ${currentChildPage >= totalPages - 1 ? 'disabled' : ''}
+        style="padding:8px 20px;border-radius:100px;border:1.5px solid var(--border);
+        background:var(--white);font-family:inherit;font-size:.82rem;cursor:pointer;
+        color:${currentChildPage >= totalPages - 1 ? 'var(--stone-lt)' : 'var(--charcoal)'};
+        opacity:${currentChildPage >= totalPages - 1 ? '.4' : '1'}">
+        다음 ›
+      </button>
+    </div>`;
+  }
+
+  document.getElementById('childView').innerHTML = html;
+}
+
+function changeChildPage(dir) {
+  const PAGE_SIZE = 5;
+  const totalPages = Math.ceil(currentChildList.length / PAGE_SIZE);
+  currentChildPage = Math.max(0, Math.min(totalPages - 1, currentChildPage + dir));
+  renderChildPage(currentClass);
 }
 
 function showPhotoView(className, childName) {

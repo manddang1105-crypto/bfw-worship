@@ -44,7 +44,7 @@
 :root{
   --ivory:#FBF8F3;--cream:#F5EFE4;--gold:#B8975A;--gold-lt:#D4B47A;--gold-dk:#8B6E3A;
   --sage:#8BAF7C;--sage-lt:#A8D49A;--sage-dk:#5A8A4E;
-  --blush:#F2C4CE;--sky:#A8D4E0;--peach:#F5C4A0;
+  --blush:#FFB5A7;--sky:#48CAE4;--peach:#F4845F;
   --charcoal:#2C2C2C;--stone:#6B6560;--stone-lt:#A09890;--border:#E8DDD0;
   --white:#FFFFFF;--success:#5A9E7A;--error:#C45050;
   --radius:16px;--radius-sm:10px;
@@ -68,7 +68,7 @@ body{background:var(--ivory);color:var(--charcoal);font-family:'Noto Sans KR',sa
 .page{display:none;max-width:640px;margin:0 auto;padding:0 20px 80px}
 .page.active{display:block}
 
-.site-header{text-align:center;padding:36px 0 24px;position:relative;overflow:hidden}
+.site-header{text-align:center;padding:44px 0 28px;position:relative;overflow:hidden;min-height:220px}
 .header-ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:14px;opacity:.5}
 .orn-line{height:1px;width:60px;background:linear-gradient(90deg,transparent,var(--gold))}
 .orn-line.r{background:linear-gradient(90deg,var(--gold),transparent)}
@@ -383,23 +383,38 @@ select.float-input.selected{color:var(--charcoal)}
   border:none;background:var(--gold-dk);color:white;font-family:inherit;
   font-size:.9rem;font-weight:500;cursor:pointer}
 
-/* ── 헤더 봄 씬 ── */
+/* ── 헤더 여름 씬 ── */
 .header-scene{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
 .site-header>*:not(.header-scene){position:relative;z-index:1}
-.hs-hill{position:absolute;border-radius:50%;bottom:-40px}
-.hs-hill-1{width:600px;height:200px;left:50%;transform:translateX(-50%);
-  background:linear-gradient(170deg,rgba(168,212,160,.2),rgba(139,175,124,.13))}
-.hs-hill-2{width:380px;height:140px;left:50%;transform:translateX(-50%);
-  background:linear-gradient(170deg,rgba(185,228,175,.15),rgba(140,190,125,.1))}
+/* 파도 */
+.hs-hill{position:absolute;bottom:-40px}
+.hs-hill-1{width:700px;height:110px;left:50%;transform:translateX(-50%);
+  border-radius:50% 50% 0 0/60px 60px 0 0;
+  background:linear-gradient(180deg,rgba(72,202,228,.16),rgba(0,150,199,.07))}
+.hs-hill-2{width:480px;height:72px;left:50%;transform:translateX(-55%);bottom:-16px;
+  border-radius:50% 50% 0 0/40px 40px 0 0;
+  background:linear-gradient(180deg,rgba(0,180,216,.13),rgba(0,119,182,.06))}
+/* 교회 */
 .hs-church{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);opacity:.11}
 .hs-church svg{width:72px}
-.hs-cloud{position:absolute;border-radius:40px;background:white;
+/* 태양 */
+.hs-sun{position:absolute;top:8%;right:8%;width:72px;height:72px;border-radius:50%;
+  background:radial-gradient(circle,#FFE566 25%,#FFD166 55%,rgba(255,209,102,0));
+  box-shadow:0 0 0 14px rgba(255,209,102,.18),0 0 0 30px rgba(255,209,102,.11),0 0 0 52px rgba(255,209,102,.06),0 0 0 80px rgba(255,209,102,.03);
+  animation:sunPulse 4s ease-in-out infinite}
+@keyframes sunPulse{
+  0%,100%{box-shadow:0 0 0 14px rgba(255,209,102,.18),0 0 0 30px rgba(255,209,102,.11),0 0 0 52px rgba(255,209,102,.06),0 0 0 80px rgba(255,209,102,.03)}
+  50%{box-shadow:0 0 0 20px rgba(255,209,102,.22),0 0 0 44px rgba(255,209,102,.13),0 0 0 70px rgba(255,209,102,.07),0 0 0 100px rgba(255,209,102,.04)}
+}
+/* 구름 */
+.hs-cloud{position:absolute;border-radius:50px;background:rgba(255,255,255,.92);
   animation:cloudDrift ease-in-out infinite alternate}
-.hs-cloud span{position:absolute;background:white;border-radius:50%;display:block}
-@keyframes cloudDrift{0%{transform:translateX(-8px)}100%{transform:translateX(8px)}}
-.hs-spark{position:absolute;width:5px;height:5px;border-radius:50%;
+.hs-cloud span{position:absolute;background:rgba(255,255,255,.92);border-radius:50%;display:block}
+@keyframes cloudDrift{0%{transform:translateX(-22px)}100%{transform:translateX(22px)}}
+/* 빛 반짝임 */
+.hs-spark{position:absolute;border-radius:50%;
   animation:sparkPulse ease-in-out infinite}
-@keyframes sparkPulse{0%,100%{opacity:0;transform:scale(.2)}50%{opacity:.75;transform:scale(1)}}
+@keyframes sparkPulse{0%,100%{opacity:0;transform:scale(.15)}50%{opacity:.9;transform:scale(1)}}
 
 /* ── 로고 아이콘 ── */
 .logo-icon{display:inline-flex;align-items:center;justify-content:center;
@@ -418,27 +433,30 @@ select.float-input.selected{color:var(--charcoal)}
   background:linear-gradient(90deg,#B8975A,#EDD98A 50%,#B8975A)}
 .logo-leaf{position:absolute;width:8px;height:8px;border-radius:50% 50% 50% 0}
 
-/* ── 꽃잎 파티클 ── */
+/* ── 여름 버블 파티클 ── */
 .petals-wrap{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
-.petal{position:absolute;top:-20px;opacity:0;border-radius:50% 50% 50% 0/60% 60% 40% 40%;
-  animation:petalFall linear infinite}
-@keyframes petalFall{
-  0%{opacity:0;transform:translateY(0) rotate(0deg)}
-  8%{opacity:.6}88%{opacity:.35}
-  100%{opacity:0;transform:translateY(105vh) rotate(540deg)}
+.petal{position:absolute;bottom:-24px;opacity:0;border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.45);background:rgba(255,255,255,.06);
+  animation:bubbleRise linear infinite}
+@keyframes bubbleRise{
+  0%{opacity:0;transform:translateY(0) scale(.75) translateX(0)}
+  10%{opacity:.5}
+  50%{transform:translateY(-50vh) scale(1) translateX(18px)}
+  85%{opacity:.28}
+  100%{opacity:0;transform:translateY(-108vh) scale(1.15) translateX(-10px)}
 }
 
 /* ── 배경 플로팅 오브 ── */
 .bg-canvas{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
 .bg-orb{position:absolute;border-radius:50%;filter:blur(72px);will-change:transform;opacity:.38}
 .bg-orb-1{width:560px;height:560px;top:-140px;left:-180px;
-  background:radial-gradient(circle,#F2C4CE,#F5C4A0);
+  background:radial-gradient(circle,#ADE8F4,#90E0EF);
   animation:orb1 14s ease-in-out infinite}
 .bg-orb-2{width:420px;height:420px;bottom:15%;right:-120px;
-  background:radial-gradient(circle,#A8D4E0,#8BAF7C);
+  background:radial-gradient(circle,#FFD166,#FFBA47);
   animation:orb2 18s ease-in-out infinite}
 .bg-orb-3{width:320px;height:320px;bottom:-60px;left:25%;
-  background:radial-gradient(circle,#F5EFD0,#F2C4CE 70%);
+  background:radial-gradient(circle,#B7E4C7,#74C69D 70%);
   animation:orb3 22s ease-in-out infinite}
 @keyframes orb1{
   0%,100%{transform:translate(0,0) scale(1)}
@@ -673,14 +691,14 @@ select.float-input.selected{color:var(--charcoal)}
 <!-- ====== 업로드 ====== -->
 <div class="page active" id="page-upload">
   <header class="site-header">
-    <!-- 봄 씬 배경 -->
+    <!-- 여름 씬 배경 -->
     <div class="header-scene" aria-hidden="true">
       <div class="hs-hill hs-hill-1"></div>
       <div class="hs-hill hs-hill-2"></div>
       <div class="hs-church">
         <svg viewBox="0 0 100 110" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="18" y="52" width="64" height="52" rx="3" fill="#5A8A4E"/>
-          <polygon points="8,52 50,16 92,52" fill="#7DAF6E"/>
+          <rect x="18" y="52" width="64" height="52" rx="3" fill="#3A9E8A"/>
+          <polygon points="8,52 50,16 92,52" fill="#4DBFA8"/>
           <rect x="44" y="4" width="12" height="20" rx="2" fill="white"/>
           <rect x="36" y="11" width="28" height="12" rx="2" fill="white"/>
           <rect x="36" y="76" width="28" height="28" rx="10" fill="rgba(255,255,255,.65)"/>
@@ -688,24 +706,38 @@ select.float-input.selected{color:var(--charcoal)}
           <rect x="60" y="60" width="18" height="18" rx="9" fill="rgba(255,255,255,.4)"/>
         </svg>
       </div>
-      <div class="hs-cloud" style="width:80px;height:22px;top:20%;left:6%;opacity:.5;animation-duration:4s">
-        <span style="width:36px;height:36px;top:-18px;left:10px"></span>
-        <span style="width:26px;height:26px;top:-12px;left:36px"></span>
+      <!-- 태양 -->
+      <div class="hs-sun"></div>
+      <!-- 구름 1 (왼쪽, 큰) -->
+      <div class="hs-cloud" style="width:160px;height:38px;top:18%;left:2%;opacity:.72;animation-duration:6s">
+        <span style="width:64px;height:64px;top:-36px;left:16px"></span>
+        <span style="width:46px;height:46px;top:-26px;left:72px"></span>
+        <span style="width:32px;height:32px;top:-18px;left:110px"></span>
       </div>
-      <div class="hs-cloud" style="width:60px;height:18px;top:14%;right:10%;opacity:.42;animation-duration:6s;animation-delay:-2s">
-        <span style="width:28px;height:28px;top:-14px;left:8px"></span>
-        <span style="width:20px;height:20px;top:-10px;left:28px"></span>
+      <!-- 구름 2 (중앙, 중간) -->
+      <div class="hs-cloud" style="width:110px;height:28px;top:12%;left:36%;opacity:.58;animation-duration:8s;animation-delay:-3s">
+        <span style="width:48px;height:48px;top:-28px;left:10px"></span>
+        <span style="width:34px;height:34px;top:-20px;left:52px"></span>
+        <span style="width:24px;height:24px;top:-14px;left:80px"></span>
       </div>
-      <div class="hs-spark" style="top:24%;left:20%;background:#F2C4CE;animation-duration:3.2s"></div>
-      <div class="hs-spark" style="top:18%;right:25%;background:#A8D4E0;animation-duration:4.1s;animation-delay:-1.5s"></div>
-      <div class="hs-spark" style="top:32%;left:72%;background:#A8D49A;animation-duration:3.7s;animation-delay:-.8s"></div>
+      <!-- 구름 3 (오른쪽 하단, 작은 — 태양 아래) -->
+      <div class="hs-cloud" style="width:80px;height:20px;top:42%;right:4%;opacity:.45;animation-duration:5s;animation-delay:-1.5s">
+        <span style="width:36px;height:36px;top:-20px;left:8px"></span>
+        <span style="width:26px;height:26px;top:-14px;left:40px"></span>
+      </div>
+      <!-- 빛 반짝임 -->
+      <div class="hs-spark" style="width:10px;height:10px;top:28%;left:16%;background:#FFD166;animation-duration:3.2s"></div>
+      <div class="hs-spark" style="width:8px;height:8px;top:22%;left:52%;background:#48CAE4;animation-duration:4.1s;animation-delay:-1.5s"></div>
+      <div class="hs-spark" style="width:11px;height:11px;top:36%;left:74%;background:#95D5B2;animation-duration:3.7s;animation-delay:-.8s"></div>
+      <div class="hs-spark" style="width:7px;height:7px;top:16%;left:30%;background:#FFB5A7;animation-duration:5s;animation-delay:-3s"></div>
+      <div class="hs-spark" style="width:9px;height:9px;top:44%;left:44%;background:#FFD166;animation-duration:4.5s;animation-delay:-2s"></div>
     </div>
     <!-- 로고 아이콘 -->
     <div class="logo-icon">
       <div class="logo-cross"></div>
-      <div class="logo-leaf" style="top:6px;right:6px;transform:rotate(45deg);background:#F2C4CE"></div>
-      <div class="logo-leaf" style="bottom:6px;left:6px;transform:rotate(225deg);background:#A8D4E0"></div>
-      <div class="logo-leaf" style="top:6px;left:6px;transform:rotate(-45deg);background:#F5C4A0"></div>
+      <div class="logo-leaf" style="top:6px;right:6px;transform:rotate(45deg);background:#FFB5A7"></div>
+      <div class="logo-leaf" style="bottom:6px;left:6px;transform:rotate(225deg);background:#48CAE4"></div>
+      <div class="logo-leaf" style="top:6px;left:6px;transform:rotate(-45deg);background:#FFD166"></div>
     </div>
     <div class="header-ornament">
       <div class="orn-line"></div><span style="color:var(--sage);font-size:.9rem">✦</span>
@@ -2510,7 +2542,10 @@ async function checkMyUpload() {
 // ── 영상 보기 (유튜브 링크 관리) ──
 const VIDEO_CACHE_KEY = 'bfc_video_list';
 const VIDEO_CACHE_TTL = 30 * 60 * 1000; // 30분
-let videoFetchPromise = null; // 중복 요청 방지
+const VIDEO_PAGE_SIZE = 5;
+let videoFetchPromise = null;
+let videoCurrentPage = 0;
+let videoAllList = [];
 
 function getVideoCache() {
   try {
@@ -2567,8 +2602,8 @@ async function fetchYoutubeTitle(videoId) {
   } catch { return ''; }
 }
 
-function buildVideoListHTML(list) {
-  return list.map(v => `
+function buildVideoCardHTML(v) {
+  return `
     <a class="video-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener">
       <div class="video-thumb-wrap">
         <img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg"
@@ -2587,8 +2622,65 @@ function buildVideoListHTML(list) {
           YouTube에서 보기
         </div>
       </div>
-    </a>
-  `).join('');
+    </a>`;
+}
+
+function renderVideoPage() {
+  const container = document.getElementById('videoList');
+  const empty = document.getElementById('videoEmpty');
+  if (!container) return;
+
+  const reversed = [...videoAllList].reverse(); // 최신순
+  const total = reversed.length;
+
+  if (total === 0) {
+    container.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+
+  const totalPages = Math.ceil(total / VIDEO_PAGE_SIZE);
+  videoCurrentPage = Math.max(0, Math.min(videoCurrentPage, totalPages - 1));
+  const start = videoCurrentPage * VIDEO_PAGE_SIZE;
+  const pageItems = reversed.slice(start, start + VIDEO_PAGE_SIZE);
+
+  let html = pageItems.map(buildVideoCardHTML).join('');
+
+  if (totalPages > 1) {
+    html += `<div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:18px;flex-wrap:wrap;padding-bottom:4px">`;
+    // 이전 버튼
+    html += `<button onclick="goVideoPage(${videoCurrentPage - 1})"
+      ${videoCurrentPage === 0 ? 'disabled' : ''}
+      style="padding:7px 14px;border-radius:100px;border:1.5px solid var(--border);
+      background:var(--white);font-family:inherit;font-size:.78rem;cursor:pointer;
+      color:var(--stone);opacity:${videoCurrentPage === 0 ? '.35' : '1'}">‹</button>`;
+    // 페이지 번호
+    for (let i = 0; i < totalPages; i++) {
+      const active = i === videoCurrentPage;
+      html += `<button onclick="goVideoPage(${i})"
+        style="width:34px;height:34px;border-radius:50%;
+        border:1.5px solid ${active ? 'var(--gold)' : 'var(--border)'};
+        background:${active ? 'linear-gradient(135deg,var(--gold-lt),var(--gold-dk))' : 'var(--white)'};
+        color:${active ? 'white' : 'var(--stone)'};font-family:inherit;font-size:.82rem;
+        font-weight:${active ? '500' : '300'};cursor:pointer;transition:all .2s">${i + 1}</button>`;
+    }
+    // 다음 버튼
+    html += `<button onclick="goVideoPage(${videoCurrentPage + 1})"
+      ${videoCurrentPage >= totalPages - 1 ? 'disabled' : ''}
+      style="padding:7px 14px;border-radius:100px;border:1.5px solid var(--border);
+      background:var(--white);font-family:inherit;font-size:.78rem;cursor:pointer;
+      color:var(--stone);opacity:${videoCurrentPage >= totalPages - 1 ? '.35' : '1'}">›</button>`;
+    html += `</div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function goVideoPage(page) {
+  videoCurrentPage = page;
+  renderVideoPage();
+  document.getElementById('videoList').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 async function renderVideoList() {
@@ -2599,8 +2691,8 @@ async function renderVideoList() {
   // 1) 캐시된 데이터 즉시 표시
   const cached = getVideoCache();
   if (cached && cached.length > 0) {
-    if (empty) empty.style.display = 'none';
-    container.innerHTML = buildVideoListHTML(cached);
+    videoAllList = cached;
+    renderVideoPage();
   } else {
     container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--stone-lt);font-size:.82rem">불러오는 중...</div>';
   }
@@ -2610,13 +2702,9 @@ async function renderVideoList() {
   if (!container) return;
   if (fresh === null) return; // 네트워크 실패 → 캐시 유지
 
-  if (fresh.length === 0) {
-    container.innerHTML = '';
-    if (empty) empty.style.display = 'block';
-    return;
-  }
-  if (empty) empty.style.display = 'none';
-  container.innerHTML = buildVideoListHTML(fresh);
+  videoAllList = fresh;
+  videoCurrentPage = 0;
+  renderVideoPage();
 }
 
 async function adminAddVideo(url) {
@@ -2689,15 +2777,15 @@ async function renderAdminVideoList() {
   `).join('');
 }
 
-// ── 꽃잎 파티클 ──
+// ── 여름 버블 파티클 ──
 (function(){
   const wrap=document.getElementById('petalsWrap');
-  const colors=['#F2C4CE','#F9D4C0','#FFE8EC','#D4ECC8','#C8E4F0','#FDD9E0'];
-  for(let i=0;i<20;i++){
+  for(let i=0;i<24;i++){
     const p=document.createElement('div');
     p.className='petal';
-    const s=5+Math.random()*9;
-    p.style.cssText=`width:${s}px;height:${s*.8}px;left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${9+Math.random()*11}s;animation-delay:-${Math.random()*16}s;transform:rotate(${Math.random()*360}deg);`;
+    const s=6+Math.random()*16;
+    const opacity=(0.04+Math.random()*0.08).toFixed(2);
+    p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:rgba(255,255,255,${opacity});animation-duration:${11+Math.random()*14}s;animation-delay:-${Math.random()*22}s;`;
     wrap.appendChild(p);
   }
 })();

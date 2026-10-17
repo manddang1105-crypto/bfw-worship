@@ -915,7 +915,7 @@ let currentWeek = 'all';
 function isUploadBlocked() {
   const now = new Date();
   const dow = now.getDay(), hour = now.getHours(), min = now.getMinutes();
-  return (dow === 6 && hour >= 18);
+  return (dow === 6 && (hour > 11 || (hour === 11 && min >= 0)));
 }
 
 function checkUploadTime() {
@@ -924,12 +924,12 @@ function checkUploadTime() {
   if (isUploadBlocked()) {
     dot.style.background = '#C45050';
     dot.style.animation = 'none';
-    text.textContent = '업로드 마감 · 토요일 오후 6:00 이후';
+    text.textContent = '업로드 마감 · 토요일 오전 11:00 이후';
     text.style.color = 'var(--error)';
   } else {
     dot.style.background = 'var(--success)';
     dot.style.animation = '';
-    text.textContent = '업로드 가능 · 주일 00:00 ~ 토요일 오후 6:00';
+    text.textContent = '업로드 가능 · 주일 00:00 ~ 토요일 오전 11:00';
     text.style.color = '';
   }
 }
@@ -947,7 +947,7 @@ function showTimeBlockPopup() {
       <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;color:var(--charcoal);margin-bottom:10px">업로드 가능 시간이 아니에요</h2>
       <p style="font-size:.84rem;color:var(--stone);line-height:1.9;margin-bottom:20px;white-space:pre-wrap">
         현재 시각: <strong>${days[dow]}요일 ${h}:${m}</strong><br>
-        업로드 가능: <strong>주일 00:00 ~ 토요일 오후 6:00</strong>
+        업로드 가능: <strong>주일 00:00 ~ 토요일 오전 11:00</strong>
       </p>
       <button onclick="this.closest('.time-overlay').remove()"
         style="padding:12px 32px;border-radius:100px;border:1.5px solid var(--border);
